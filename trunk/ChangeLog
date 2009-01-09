@@ -1,0 +1,136 @@
+/*
+                                ChangeLog
+
+*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+*
+*       Part of:        Stuff
+*
+*       Author:         E. BERTIN (IAP)
+*
+*       Contents:       log of changes made to the Stuff source
+*
+*       Last modify:    02/12/2007
+*
+*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+*/
+
+------------------------------------------------------------------------
+r676 | bertin | 2007-12-02 18:24:38 +0100 (Sun, 02 Dec 2007) | 3 lines
+
+Updated prefs functions to support '@' prefixes.
+Pushed version number to 1.17.
+
+------------------------------------------------------------------------
+r675 | bertin | 2007-11-23 14:45:19 +0100 (Fri, 23 Nov 2007) | 2 lines
+
+Cleaned up junk in WFCam filter curves.
+
+------------------------------------------------------------------------
+r674 | marmo | 2007-11-23 14:04:02 +0100 (Fri, 23 Nov 2007) | 1 line
+
+WFCAM filters added.
+------------------------------------------------------------------------
+r670 | marmo | 2007-11-20 16:02:13 +0100 (Tue, 20 Nov 2007) | 1 line
+
+deleting old filter files
+------------------------------------------------------------------------
+r669 | marmo | 2007-11-20 16:00:04 +0100 (Tue, 20 Nov 2007) | 1 line
+
+wavelength sorted
+------------------------------------------------------------------------
+r668 | marmo | 2007-11-20 15:08:43 +0100 (Tue, 20 Nov 2007) | 1 line
+
+Y H J Ks WIRCam filter curves added.
+------------------------------------------------------------------------
+r651 | bertin | 2007-11-05 19:54:38 +0100 (Mon, 05 Nov 2007) | 2 lines
+
+Rewrote configure.ac to include data dir in RPM distribution and allow the executable to be compiiled with icc.
+
+------------------------------------------------------------------------
+r504 | marmo | 2007-06-19 20:29:16 +0200 (Tue, 19 Jun 2007) | 1 line
+
+rpm building generalised.
+------------------------------------------------------------------------
+r386 | bertin | 2007-02-09 20:44:11 +0100 (Fri, 09 Feb 2007) | 4 lines
+
+Added Hubble type output in the last column (request of Carlo Schimd).
+---> Removed 0.248 mag offset is distance modulus <---.
+Fixed README.
+
+------------------------------------------------------------------------
+r305 | baillard | 2006-07-19 15:28:15 +0200 (Wed, 19 Jul 2006) | 2 lines
+
+Change name
+
+------------------------------------------------------------------------
+r303 | baillard | 2006-07-19 15:05:48 +0200 (Wed, 19 Jul 2006) | 2 lines
+
+Change names
+
+------------------------------------------------------------------------
+r298 | baillard | 2006-07-18 13:55:38 +0200 (Tue, 18 Jul 2006) | 2 lines
+
+Move stuff to public repository
+
+------------------------------------------------------------------------
+r14 | bertin | 2005-10-17 17:03:54 +0200 (Mon, 17 Oct 2005) | 1 line
+
+first Stuff import
+
+-------------------------------- old ChangeLog --------------------------------
+Who     When            Where(mostly)   What
+
+EB      23/05/99        makeit()        Fixed floating exception caused by
+                        scanimage()     infinite max. absolute magnitude.
+
+EB      02/07/99        makeit()        Apply removal of galaxies brighter
+                                        than the user-defined limit.
+
+EB      16/09/99        makeit()        Change output format (add separate
+                                        bulge position angle).
+
+EB      27/09/99        gal_bulgeflat() q>1 bug fixed.
+
+EB      28/09/99        makeit()
+                        sed_load()      More sophisticated handling of data
+                                        filenames.
+
+EB      11/10/99        makeit()
+                        prefs.h
+                        prefs.c         Image and pixel sizes are now arrays.
+
+EB      14/10/99        pb_calib()      Now displays the relative Zero-points
+                                        between observed passbands.
+                        sed_load()      Memory overflow in buffer handling fixed.
+
+EB      15/11/99        main()          Set the default configuration filename
+                                        to "default.stuff" as it should be.
+
+EB      26/01/2005      main()          "stuff.conf" is now the default name of
+                                        the configuration file.
+                        -               Upgrade to comtemporary TERAPIX release
+                                        archive format (autoconf, etc.)
+
+EB      31/05/2005      gal_disksize()  Fixed miraculously compensated scaling
+                                        bug. beta parameter now complies with
+                                        de Jong and Lacey 2000 instead of 1998.
+                                        DISK_SIGMAL config parameter added.
+
+                        main()          Added -dd option for a complete dump
+                                        of config parameters.
+
+EB      08/06/2005      galaxies.c      Significant rewriting of code to
+                                        prepare for future stuff. Added
+                                        "galtype" structures.
+                        cluster.c       New cluster functions and options.
+
+EB      10/06/2005      lf.c            Added LF_MSTAREVOL parameter to
+                                        simulate pure luminosity evolution.
+                                        Switched default LF parameters to
+                                        those of the 2dFGRS (Madgwick et al.
+                                        2004).
+
+EB      06/08/2005      main()          Changed output of -v option.
+
+EB      09/11/2005      lf_evol()       Added LF_PHISTAREVOL parameter to
+                                        simulate density evolution.
