@@ -1,0 +1,31 @@
+November 26, 2001: V1.10
+	- Added magnitude zero-point and sky brightness computations
+
+October 15, 1999: V1.05
+	- Added display of relative zero-points.
+	- Ultra-faint galaxy size bug fixed.
+
+October 11, 1999: V1.04
+	- New DATA_DIRECTORY string parameter that specifies a particular
+	  directory for Stuff data (SEDs, filters, etc.).
+	- Image and pixel sizes can now be different for each passband.
+
+September 27, 1999: V1.03
+	- Changed output format (added separate bulge position angle).
+	- Bulge q>1 bug fixed.
+
+July 2, 1999: V1.02
+	- Filtering of galaxies brighter than MAG_LIMITS(0) now applies.
+
+May 23, 1999: V1.01
+	- floating exception on DEC Alphas fixed.
+	- PICKLES stellar SED library added (thanks to S. Arnouts).
+
+November 5, 1998: V1.0
+	- First experimental release.
+	- Implementation is still incomplete:
+	  - no galactic objects yet,
+	  - no galactic (Milky Way) extinction,
+	  - galaxy-galaxy correlations missing,
+	  - no gravitational lensing,
+	  - no galaxy evolution.

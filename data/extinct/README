@@ -1,0 +1,13 @@
+This sub-directory contains extinction law (".ext") files, which
+describe extinction curves.
+- In each file there is one line per data-point. The first column
+  is the wavelength, in Angstroems. The second column contains the
+  extinction in relative optical depth.
+- Comment lines must begin with `#'.
+- Wavelengths must be sorted by increasing lambda.
+- optical depths are linearly interpolated between data-points
+  by SkyStuff.
+- Each extinction law must explicitely begin and end
+  with optical depth equal to 0.
+
+				Emmanuel BERTIN <bertin@iap.fr>

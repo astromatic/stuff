@@ -1,0 +1,14 @@
+This sub-directory contains passband (".pb") files, that describe
+individual/combined spectral transmissions of selected
+filters/instruments.
+- In each file there is one line per data-point. The first column
+  is the wavelength, in Angstroems. The second column contains the
+  transmission.
+- Comment lines must begin with `#'.
+- Wavelengths must be sorted by increasing lambda.
+- Spectral responses are linearly interpolated between data-points
+  by SkyStuff.
+- Each spectral transmission curve must explicitely begin and end
+  with transmission equal to 0.
+
+				Emmanuel BERTIN <bertin@iap.fr>

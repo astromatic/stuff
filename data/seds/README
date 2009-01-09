@@ -1,0 +1,14 @@
+This sub-directory contains ".sed" files describing spectral energy
+distributions of selected astronomical objects and photometric system
+reference spectra.
+- In each file there is one line per data-point. The first column
+  is the wavelength, in Angstroems. The second column contains the
+  f_lambda flux-density, in arbitrary units (all spectra get recalibrated).
+- Comment lines must begin with `#'.
+- If wavelengths are negative, flux-densities are read as f_nu.
+- Wavelengths must be sorted by increasing lambda.
+- Spectra are linearly interpolated between data-points by SkyStuff,
+  in their native units (f_nu or f_lambda).
+- Each spectrum must begin and end with f_lambda or f_nu equal to 0.
+
+				Emmanuel BERTIN <bertin@iap.fr>
