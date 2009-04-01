@@ -9,7 +9,7 @@
 *
 *	Contents:	global definitions.
 *
-*	Last modify:	02/10/2008
+*	Last modify:	01/04/2009
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -26,7 +26,8 @@
 #define         BANNER		"Stuff"
 #define         MYVERSION       VERSION
 #define         COPYRIGHT	"Emmanuel BERTIN (bertin@iap.fr)"
-#define         INSTITUTE	"TERAPIX team at IAP  http://terapix.iap.fr"
+#define		WEBSITE		"http://astromatic.iap.fr/software/stuff"
+#define         INSTITUTE	"IAP  http://www.iap.fr"
 
 /*----------------------------- Physical constants --------------------------*/
 

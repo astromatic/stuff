@@ -97,7 +97,7 @@ AC_DEFINE_UNQUOTED([DATA_DIR], "$stuffdatadir",[Default path for Stuff data])
 n_pthreads=16
 AC_ARG_ENABLE(threads,
         [AC_HELP_STRING([--enable-threads@<:@=<max_number_of_threads>@:>@],
-	[Enable multhreading (on with up to $n_pthreads threads by default)])],
+	[Enable multhreading (on with up to 16 threads by default)])],
     if test "$enableval" = "no"; then
       use_pthreads="no"
     else
