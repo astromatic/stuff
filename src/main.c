@@ -9,7 +9,7 @@
 *
 *	Contents:	Parsing of the command line.
 *
-*	Last modify:	06/08/2005
+*	Last modify:	01/04/2009
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -48,9 +48,9 @@ int	main(int argc, char *argv[])
 
   if (argc<1)
     {
-    fprintf(OUTPUT, "\n                %s  Version %s (%s)\n",
-		BANNER, MYVERSION, DATE);
-    fprintf(OUTPUT, "\nFor information, please contact: %s\n", COPYRIGHT);
+    fprintf(OUTPUT, "\n         %s  version %s (%s)\n", BANNER,MYVERSION,DATE);
+    fprintf(OUTPUT, "\nby %s\n", COPYRIGHT);
+    fprintf(OUTPUT, "visit %s\n", WEBSITE);
     error(EXIT_SUCCESS, "SYNTAX: ", SYNTAX);
     }
 

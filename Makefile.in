@@ -35,9 +35,9 @@ subdir = .
 DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(srcdir)/stuff.spec.in $(top_srcdir)/configure AUTHORS \
-	COPYING ChangeLog INSTALL THANKS autoconf/config.guess \
+	ChangeLog INSTALL THANKS autoconf/config.guess \
 	autoconf/config.sub autoconf/depcomp autoconf/install-sh \
-	autoconf/missing autoconf/mkinstalldirs
+	autoconf/missing
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/acx_prog_cc_optim.m4 \
 	$(top_srcdir)/acx_pthread.m4 \
@@ -47,7 +47,7 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 	$(ACLOCAL_M4)
 am__CONFIG_DISTCLEAN_FILES = config.status config.cache config.log \
  configure.lineno config.status.lineno
-mkinstalldirs = $(SHELL) $(top_srcdir)/autoconf/mkinstalldirs
+mkinstalldirs = $(install_sh) -d
 CONFIG_HEADER = config.h
 CONFIG_CLEAN_FILES = stuff.spec
 depcomp =
@@ -178,7 +178,7 @@ top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
 # Main Makefile for Stuff
-# Copyright (C) 2005-2008 Emmanuel Bertin.
+# Copyright (C) 2005-2009 Emmanuel Bertin.
 AUTOMAKE_OPTIONS = foreign no-dependencies
 SUBDIRS = man src
 EXTRA_DIST = data doc \
@@ -574,7 +574,7 @@ info: info-recursive
 
 info-am:
 
-install-data-am: install-data-local
+install-data-am:
 
 install-dvi: install-dvi-recursive
 
@@ -622,14 +622,13 @@ uninstall-am:
 	distclean distclean-generic distclean-hdr distclean-tags \
 	distcleancheck distdir distuninstallcheck dvi dvi-am html \
 	html-am info info-am install install-am install-data \
-	install-data-am install-data-local install-dvi install-dvi-am \
-	install-exec install-exec-am install-html install-html-am \
-	install-info install-info-am install-man install-pdf \
-	install-pdf-am install-ps install-ps-am install-strip \
-	installcheck installcheck-am installdirs installdirs-am \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-generic pdf pdf-am ps ps-am tags tags-recursive \
-	uninstall uninstall-am
+	install-data-am install-dvi install-dvi-am install-exec \
+	install-exec-am install-html install-html-am install-info \
+	install-info-am install-man install-pdf install-pdf-am \
+	install-ps install-ps-am install-strip installcheck \
+	installcheck-am installdirs installdirs-am maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-generic pdf \
+	pdf-am ps ps-am tags tags-recursive uninstall uninstall-am
 
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
@@ -641,42 +640,6 @@ rpm:	dist
 rpm-icc:	dist
 	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
 	USE_ICC="1" rpmbuild -ba --clean --nodeps $(PACKAGE_NAME).spec
-
-install-data-local:
-	if test -e $(DESTDIR)$(pkgdatadir); then \
-	  $(RM) -rf $(DESTDIR)$(pkgdatadir); \
-	fi;
-	if ! test -d $(DESTDIR)$(pkgdatadir); then \
-	  $(mkinstalldirs) $(DESTDIR)$(pkgdatadir); \
-	fi;
-	cp -rf data $(DESTDIR)$(pkgdatadir)/data;
-	$(RM) -rf `find $(DESTDIR)$(pkgdatadir) -name .svn`
-
-rpm:	dist
-	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
-	rpmbuild -ba --clean $(PACKAGE_NAME).spec $(PACKAGE_NAME)-mp.spec
-
-rpm-opteron:	dist
-	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
-	TPXCC="gcc" TPXFLAGS="-O3 -g -funroll-loops -fomit-frame-pointer -Wall -march=opteron" rpmbuild -ba --target=x86_64 --clean $(PACKAGE_NAME).spec $(PACKAGE_NAME)-mp.spec                                                               
-
-rpm-athlon:	dist
-	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
-	TPXCC="gcc" TPXFLAGS="-O3 -g -funroll-loops -fomit-frame-pointer -Wall -m32 -march=i686 -msse -mfpmath=sse -mtune=athlon" rpmbuild -ba --target=i686 --clean $(PACKAGE_NAME).spec $(PACKAGE_NAME)-mp.spec
-
-rpm-opteron-icc:	dist
-	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
-	TPXCC="icc" TPXFLAGS="-O3 -axWP -ip -unroll" rpmbuild -ba --target=x86_64 --clean $(PACKAGE_NAME).spec $(PACKAGE_NAME)-mp.spec                                                               
-
-rpm-athlon-icc:	dist
-	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
-	TPXCC="icc32" TPXFLAGS="-O3 -axWP -ip -unroll" rpmbuild -ba --target=i686 --clean $(PACKAGE_NAME).spec $(PACKAGE_NAME)-mp.spec
-
-icc:
-	$(MAKE) CC="icc" CFLAGS="-O3 -axWP -ip -unroll -pthread" LIBS="-lm -lpthread"
-
-debug:
-	$(MAKE) CFLAGS="-O3 -funroll-loops -fomit-frame-pointer -Wall -m32 -g" LIBS="-L/usr/lib/ -lpthread -lm"
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:
