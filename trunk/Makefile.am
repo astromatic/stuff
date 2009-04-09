@@ -3,7 +3,7 @@
 AUTOMAKE_OPTIONS	= foreign no-dependencies
 SUBDIRS			= man src
 EXTRA_DIST		= data doc \
-			  AUTHORS BUGS ChangeLog COPYING \
+			  AUTHORS BUGS ChangeLog COPYRIGHT \
 			  HISTORY INSTALL README THANKS \
 			  acx_pthread.m4 acx_prog_cc_optim.m4
 RPM_ROOTDIR		= `rpmbuild --nobuild -E %_topdir`
@@ -18,4 +18,14 @@ rpm:	dist
 rpm-icc:	dist
 	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
 	USE_ICC="1" rpmbuild -ba --clean --nodeps $(PACKAGE_NAME).spec
+
+install-data-local:
+	if test -e $(DESTDIR)$(pkgdatadir); then \
+	  $(RM) -rf $(DESTDIR)$(pkgdatadir); \
+	fi;
+	if ! test -d $(DESTDIR)$(pkgdatadir); then \
+	  $(mkinstalldirs) $(DESTDIR)$(pkgdatadir); \
+	fi;
+	cp -rf data $(DESTDIR)$(pkgdatadir)/data;
+	$(RM) -rf `find $(DESTDIR)$(pkgdatadir) -name .svn`
 
