@@ -1,12 +1,12 @@
 # configure.ac for Stuff
-# (C) E.Bertin 2005-2008
+# (C) E.Bertin 2005-2009
 # Process this file with autoconf to produce a configure script.
 # First, disable the annoying config.cache
 define([AC_CACHE_LOAD],)
 define([AC_CACHE_SAVE],)
 
 # This is your standard Bertin source code...
-AC_INIT(stuff, 1.18, [bertin@iap.fr])
+AC_INIT(stuff, 1.19, [bertin@iap.fr])
 AC_CONFIG_SRCDIR(src/makeit.c)
 AC_CONFIG_AUX_DIR(autoconf)
 AM_CONFIG_HEADER(config.h)

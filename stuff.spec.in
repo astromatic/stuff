@@ -39,7 +39,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %defattr(-,root,root)
-%doc AUTHORS BUGS ChangeLog COPYING HISTORY INSTALL README THANKS
+%doc AUTHORS BUGS ChangeLog COPYRIGHT HISTORY INSTALL README THANKS
 %{_bindir}/@PACKAGE_NAME@
 %{_mandir}/man1/@PACKAGE_NAME@.1*
 %{_mandir}/manx/@PACKAGE_NAME@.x*
