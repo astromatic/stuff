@@ -9,7 +9,7 @@
 *
 *	Contents:	Include file for sed.c
 *
-*	Last modify:	05/06/2005
+*	Last modify:	05/08/2009
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -21,7 +21,7 @@
 
 #define	SED_MAXNPB	128	/* Maximum number of bandpasses */
 #define	SED_NDATA	1000	/* Default size of SED array */
-#define	SED_MAXNCOMP	8	/* Maximum number of passband components */
+#define	SED_MAXNCOMP	16	/* Maximum number of passband components */
 #define	SED_DLAMBDA    	1e-6	/* Relative precision in lambda */
 #define	REF_WAVELENGTH	(5556*ANGSTROEM)
 				/* Reference wavelength for mag 0-point */

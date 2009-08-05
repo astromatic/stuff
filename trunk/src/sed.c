@@ -9,7 +9,7 @@
 *
 *       Contents:       Functions dealing with Spectral Energy Distributions.
 *
-*       Last modify:    05/06/2005
+*       Last modify:    05/08/2009
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -114,7 +114,7 @@ sedstruct	*sed_load(char *seddir_name, char *sed_name)
         QREALLOC(sedcomp[j]->data, double, ndatat);
         datat = sedcomp[j]->data+k-1;
         }
-      if (gstr && (*gstr!=0) && (*gstr!=(char)'#'))
+      if ((*gstr!=0) && (*gstr!=(char)'#'))
         {
         sscanf(gstr, "%lf %lf", &waveval, &dataval);
         if (waveval < 0.0)
