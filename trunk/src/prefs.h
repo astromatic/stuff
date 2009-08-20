@@ -9,7 +9,7 @@
 *
 *	Contents:	Include for prefs.c.
 *
-*	Last modify:	02/12/2007
+*	Last modify:	20/08/2009
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -46,7 +46,7 @@ typedef struct
 /* Passbands */
   char		refpb_name[MAXCHAR];	/* Reference passband specs */
   detenum	refdetect_type;		/* How is the ref. flux integrated */
-  char		*(pb_name[8]);		/* Observed passband specs */
+  char		*(pb_name[SED_MAXNPB]);		/* Observed passband specs */
   int		npb_name;		/* Number of bandpasses */
   detenum	obsdetect_type[SED_MAXNPB];
 					/* How is the obs. flux integrated */
