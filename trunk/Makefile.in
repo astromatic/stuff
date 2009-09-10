@@ -79,6 +79,9 @@ distuninstallcheck_listfiles = find . -type f -print
 distcleancheck_listfiles = find . -type f -print
 ACLOCAL = @ACLOCAL@
 AMTAR = @AMTAR@
+AM_CFLAGS = @AM_CFLAGS@
+AM_CPPFLAGS = @AM_CPPFLAGS@
+AM_LDFLAGS = @AM_LDFLAGS@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -174,6 +177,7 @@ sharedstatedir = @sharedstatedir@
 srcdir = @srcdir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
+top_build_prefix = @top_build_prefix@
 top_builddir = @top_builddir@
 top_srcdir = @top_srcdir@
 
@@ -641,6 +645,10 @@ rpm:	dist
 rpm-icc:	dist
 	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
 	USE_ICC="1" rpmbuild -ba --clean --nodeps $(PACKAGE_NAME).spec
+
+rpm-best:	dist
+	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
+	USE_BEST="1" rpmbuild -ba --clean --nodeps $(PACKAGE_NAME).spec
 
 install-data-local:
 	if test -e $(DESTDIR)$(pkgdatadir); then \
