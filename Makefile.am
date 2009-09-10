@@ -19,6 +19,10 @@ rpm-icc:	dist
 	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
 	USE_ICC="1" rpmbuild -ba --clean --nodeps $(PACKAGE_NAME).spec
 
+rpm-best:	dist
+	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
+	USE_BEST="1" rpmbuild -ba --clean --nodeps $(PACKAGE_NAME).spec
+
 install-data-local:
 	if test -e $(DESTDIR)$(pkgdatadir); then \
 	  $(RM) -rf $(DESTDIR)$(pkgdatadir); \
