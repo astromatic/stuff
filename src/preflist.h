@@ -9,7 +9,7 @@
 *
 *	Contents:	Keywords for the configuration file.
 *
-*	Last modify:	05/11/2007
+*	Last modify:	11/11/2009
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -34,6 +34,9 @@ pkeystruct key[] =
  {
   {"BULGE_FRACTION", P_FLOATLIST, prefs.gal_bt, 0,0, 0.0, 1.0,
    {""}, 1, GAL_MAXNTYPE, &prefs.ngal_bt},
+  {"CALIBSED_REF", P_STRING, prefs.refcalibsed_name},
+  {"CALIBSED_OBS", P_STRINGLIST, prefs.pbcalibsed_name, 0,0, 0.0,0.0,
+   {""}, 1, SED_MAXNPB, &prefs.npbcalibsed_name},
   {"CATALOG_NAME", P_STRINGLIST, prefs.cat_name, 0,0, 0.0,0.0,
    {""}, 1, SED_MAXNPB, &prefs.ncat_name},
   {"CLUSTER_LIST", P_STRING, prefs.clusterlist_name},
@@ -87,7 +90,6 @@ pkeystruct key[] =
   {"REFDETECT_TYPE", P_KEY, &prefs.refdetect_type, 0,0, 0.0,0.0,
    {"PHOTONS", "ENERGY", ""}},
   {"SED_BACKGROUND", P_STRING, prefs.backsed_name},
-  {"SED_CALIB", P_STRING, prefs.calibsed_name},
   {"SED_GALAXIES", P_STRINGLIST, prefs.gal_sedname, 0,0, 0.0,0.0,
    {""}, 1, GAL_MAXNSED, &prefs.ngal_sedname},
   {"SED_STARS", P_STRINGLIST, prefs.star_sedname, 0,0, 0.0,0.0,
@@ -129,9 +131,11 @@ char *default_prefs[] =
 " ",
 "#-------------------------------- Passbands ----------------------------------",
 " ",
-"PASSBAND_REF    couch/Bj        # Calibration passband",
+"PASSBAND_REF    couch/Bj        # Reference passband",
+"CALIBSED_REF    Vega            # SED for ref. passband mag.system (AB or Vega)",
 "REFDETECT_TYPE  ENERGY          # Ref. detector type: \"PHOTONS\" or \"ENERGY\"",
 "PASSBAND_OBS    megaprime/g,megaprime/r,megaprime/i     # Observed passband(s)",
+"CALIBSED_OBS    AB              # SED(s) for obs. mag.system(s) (AB or Vega)",
 "OBSDETECT_TYPE  PHOTONS         # Obs. detector type: \"PHOTONS\" or \"ENERGY\"",
 " ",
 "#------------------------------- Cosmology -----------------------------------",
@@ -143,7 +147,6 @@ char *default_prefs[] =
 " ",
 "#----------------------- Spectral Energy Distributions -----------------------",
 " ",
-"SED_CALIB       AB              # SED that defines the magnitude system",
 "SED_GALAXIES    E,Sbc,Scd,Im    # SEDs for galaxy components",
 " ",
 "SEDINDEX_BULGE  1,1,1,1,1,1     # bulge SED indices in SED_GALAXIES",

@@ -9,7 +9,7 @@
 *
 *	Contents:	Functions to handle the configuration file.
 *
-*	Last modify:	02/12/2007
+*	Last modify:	11/11/2009
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -512,6 +512,12 @@ void	useprefs(void)
   if (prefs.ncat_name != prefs.npb_name)
     error(EXIT_FAILURE, "*Error*: the numbers of catalogs and observed ",
 	"passbands do not match");
+
+/* Calibration SEDs */
+  i = prefs.npbcalibsed_name - 1;
+  n = strlen(prefs.pbcalibsed_name[i])+1;
+  for (j=prefs.npbcalibsed_name; j<prefs.npb_name; j++)
+    QMEMCPY(prefs.pbcalibsed_name[i], prefs.pbcalibsed_name[j], char, n);
 
 /* Fill-in image and pixel sizes */
   n =prefs.npb_name;  

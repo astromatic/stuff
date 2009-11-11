@@ -9,7 +9,7 @@
 *
 *	Contents:	Include file for sed.c
 *
-*	Last modify:	05/08/2009
+*	Last modify:	11/11/2009
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -61,8 +61,9 @@ double		sed_calib(sedstruct *sed, sedstruct *pb),
 			sedstruct *sed2, double wavefact2,
 			sedstruct **sedo);
 
-void		pb_calib(sedstruct **pb, int npb, sedstruct *refpb,
-			sedstruct *calibsed, sedstruct *backsed),
+void		pb_calib(sedstruct **pb, sedstruct **pbcalibsed, int npb,
+			sedstruct *refpb, sedstruct *refcalibsed,
+			sedstruct *backsed),
 		sed_end(sedstruct *sed),
 		sed_extinc(sedstruct *sed, sedstruct *tau, double taufact,
 			sedstruct **sedo);
