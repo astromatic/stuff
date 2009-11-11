@@ -361,7 +361,8 @@ double	sed_calib(sedstruct *sed, sedstruct *pb)
 /*
 Calibrate passbands: normalize them to a magnitude system.
 */
-void	pb_calib(sedstruct **pb, int npb, sedstruct *refpb, sedstruct *calibsed,
+void	pb_calib(sedstruct **pb, sedstruct **pbcalibsed, int npb, 
+		sedstruct *refpb, sedstruct *refcalibsed,
 		sedstruct *backsed)
   {
    sedstruct		*normsed, *pbt;
@@ -380,7 +381,9 @@ void	pb_calib(sedstruct **pb, int npb, sedstruct *refpb, sedstruct *calibsed,
   normsed->wavemax = normsed->wave[2] = 5557.0*ANGSTROEM;
 /* The "line" FWHM is indeed 1 A, and we want the result to be REF_PHOTRATE */
   normsed->data[1] = 1.0/(REF_ENERGY*ANGSTROEM);
-  sed_calib(calibsed, normsed);
+  sed_calib(refcalibsed, normsed);
+  for (j=0; j<npb; j++)
+    sed_calib(pbcalibsed[j], normsed);
   sed_end(normsed);
 
 /* Normalize background spectrum */
@@ -415,14 +418,14 @@ void	pb_calib(sedstruct **pb, int npb, sedstruct *refpb, sedstruct *calibsed,
       }
 
 /* Compute dot-product of the reference passband and the reference spectrum */
-  sed_calib(refpb,  calibsed);
+  sed_calib(refpb, refcalibsed);
 
   NPRINTF(OUTPUT, "------------- Passband name  zero-point"
 "  background (mag.arcsec-2)\n");
 
   for (j=0; j<npb; j++)
     {
-    magzp = 2.5*log10(sed_calib(pb[j], calibsed)*prefs.area[j]/prefs.gain[j]);
+    magzp = 2.5*log10(sed_calib(pb[j], pbcalibsed[j])*prefs.area[j]/prefs.gain[j]);
     backinteg = (backsed? sed_mul(backsed, 1.0, pb[j], 1.0, NULL): 1.0);
     NPRINTF(OUTPUT, "Passband #%2d: %-16.16s  %+6.3f  %+6.3f\n",
 	j+1, prefs.pb_name[j], magzp,-2.5*log10(backinteg/4.254e10));

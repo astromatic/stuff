@@ -9,7 +9,7 @@
 *
 *	Contents:	Include for prefs.c.
 *
-*	Last modify:	20/08/2009
+*	Last modify:	11/11/2009
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -56,7 +56,9 @@ typedef struct
   double	area[SED_MAXNPB];	/* Collecting area for computing ZPs */
   int		narea;			/* Number of areas */
 /* SEDs */
-  char		calibsed_name[MAXCHAR];		/* Mag. system SED filename */
+  char		refcalibsed_name[MAXCHAR];	/* Ref. system SED filename */
+  char		*(pbcalibsed_name[SED_MAXNPB]);	/* Obs. system SED filenames */
+  int		npbcalibsed_name;		/* Number of bandpasses */
   char		backsed_name[MAXCHAR];		/* Sky backgr. SED filename */
   char		*(gal_sedname[GAL_MAXNSED]);	/* Galaxy SED filenames */
   int		ngal_sedname;			/* Number of galaxy SEDs */

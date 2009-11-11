@@ -9,7 +9,7 @@
 *
 *       Contents:       Main loop
 *
-*       Last modify:    09/02/2007
+*       Last modify:    11/11/2009
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -44,9 +44,9 @@ void	makeit(void)
    clusterstruct	**clusters;
    galtypestruct	**galtype;
    galstruct		*gal;
-   sedstruct		*pb[SED_MAXNPB],*galsed[GAL_MAXNSED],
-			*starsed[STAR_MAXNSED],
-			*calibsed, *refpb, *tau_i, *bsed,*dsed, *backsed;
+   sedstruct		*pb[SED_MAXNPB],*pbcalibsed[SED_MAXNPB],
+			*galsed[GAL_MAXNSED], *starsed[STAR_MAXNSED],
+			*refcalibsed, *refpb, *tau_i, *bsed,*dsed, *backsed;
    lfstruct		*lf, *lfevol;
    time_t		thetime, thetime2;
    struct tm		*tm;
@@ -132,8 +132,10 @@ void	makeit(void)
   refpb = sed_load(filterdir_name, prefs.refpb_name);
 
 /* Get the calibration SED (which defines the magnitude system) */
-  NFPRINTF(OUTPUT, "Loading the calibration SED...")
-  calibsed = sed_load(seddir_name, prefs.calibsed_name);
+  NFPRINTF(OUTPUT, "Loading the calibration SEDs...")
+  refcalibsed = sed_load(seddir_name, prefs.refcalibsed_name);
+  for (p=0; p<npb; p++)
+    pbcalibsed[p] = sed_load(seddir_name, prefs.pbcalibsed_name[p]);
 
 /* Get the sky background SED */
   if (*prefs.backsed_name != '*')
@@ -146,10 +148,12 @@ void	makeit(void)
 
 /* Calibrate the passbands in the chosen magnitude system */
   NFPRINTF(OUTPUT, "Calibrating passbands...")
-  pb_calib(pb, npb, refpb, calibsed, backsed);
+  pb_calib(pb, pbcalibsed, npb, refpb, refcalibsed, backsed);
 
 /* Forget the calibration SED to gain memory */
-  sed_end(calibsed);
+  sed_end(refcalibsed);
+  for (p=0; p<npb; p++)
+    sed_end(pbcalibsed[p]);
 
 /* Get the galaxy SEDs */
   NFPRINTF(OUTPUT, "Loading galaxy SEDs...")
