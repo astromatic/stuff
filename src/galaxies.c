@@ -9,7 +9,7 @@
 *
 *       Contents:       Functions dealing more specifically with galaxies.
 *
-*       Last modify:    09/02/2007
+*       Last modify:    02/05/2010
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -231,4 +231,65 @@ galstruct *gal_init(galtypestruct *galtype, double z, double mabsmax,
 
   return gal;
   }
+
+
+/********************************* gal_shear ********************************/
+/*
+Apply a shear term to a galaxy structure.
+*/
+void	gal_shear(galstruct *gal, double kappa, double *gamma, int npb)
+  {
+   double	a,b,ct,st,mx2,my2,mxy, s11,s12,s21,s22, smx2,smy2,smxy, dm;
+   int		p;
+
+  s11 = 1.0 - kappa - gamma[0];
+  s12 = s21 = -gamma[1];
+  s22 = 1.0 - kappa + gamma[0];
+
+/* disk */
+  if (gal->dflat != 0.0 && gal->dsize!= 0.0)
+    {
+    a = gal->dsize/sqrt(gal->dflat);
+    b = a*gal->dflat;
+    ct = cos(0.0174533*gal->dposang);
+    st = sin(0.0174533*gal->dposang);
+    mx2 = (a*a*ct*ct+b*b*st*st);
+    my2 = (a*a*st*st+b*b*ct*ct);
+    mxy = (a*a-b*b)*ct*st;
+    smx2 = mx2*s11*s11+my2*s12*s12+mxy*2.0*s11*s12;
+    smy2 = mx2*s21*s21+my2*s22*s22+mxy*2.0*s21*s22;
+    smxy = mx2*s11*s21+my2*s12*s22+mxy*(s11*s22+s12*s21);
+    a = sqrt(0.5*(smx2+smy2)+sqrt(0.25*(smx2-smy2)*(smx2-smy2)+smxy*smxy));
+    b = sqrt(smx2+smy2-a*a);
+    gal->dposang = 28.64789*atan2(2.0*smxy, smx2-smy2);
+    gal->dsize = sqrt(a*b);
+    gal->dflat = b/a;
+    }
+/* bulge */
+  if (gal->bflat != 0.0 && gal->bsize!= 0.0)
+    {
+    a = gal->bsize/sqrt(gal->bflat);
+    b = a*gal->bflat;
+    ct = cos(0.0174533*gal->bposang);
+    st = sin(0.0174533*gal->bposang);
+    mx2 = (a*a*ct*ct+b*b*st*st);
+    my2 = a*a*st*st+b*b*ct*ct;
+    mxy = (a*a-b*b)*ct*st;
+    smx2 = mx2*s11*s11+my2*s12*s12;
+    smy2 = mx2*s21*s21+my2*s22*s22;
+    smxy = mx2*s11*s21+my2*s21*s22+mxy*(s11*s22+s12*s22);
+    a = sqrt(0.5*(smx2+smy2)+sqrt(0.25*(smx2-smy2)*(smx2-smy2)+smxy*smxy));
+    b = sqrt(smx2+smy2-a*a);
+    gal->bposang = 28.64789*atan2(2*smxy, smx2-smy2);
+    gal->bsize = sqrt(a*b);
+    gal->bflat = b/a;
+    }
+
+  dm = 2.5*log10(fabs(s11*s22-s21*s12));
+  for (p=0; p<npb; p++)
+    gal->mag[p] += dm;
+
+  return;
+  }
+
 

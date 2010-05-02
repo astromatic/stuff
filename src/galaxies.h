@@ -9,7 +9,7 @@
 *
 *	Contents:	Include file for galaxies.c
 *
-*	Last modify:	07/06/2005
+*	Last modify:	02/05/2010
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -85,6 +85,8 @@ double		gal_bulgeflat(double cosi),
 		gal_cosi(void);
 
 void		galtype_end(galtypestruct *galtype),
-		gal_end(galstruct *gal);
+		gal_end(galstruct *gal),
+		gal_shear(galstruct *gal, double kappa, double *gamma, int npb);
 
 #endif
+

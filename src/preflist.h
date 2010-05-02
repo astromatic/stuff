@@ -9,7 +9,7 @@
 *
 *	Contents:	Keywords for the configuration file.
 *
-*	Last modify:	11/11/2009
+*	Last modify:	02/05/2010
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -63,6 +63,9 @@ pkeystruct key[] =
   {"IMAGE_WIDTH", P_INTLIST, prefs.width, 1, 1000000000, 0.0,0.0,
    {""}, 1, SED_MAXNPB, &prefs.nwidth},
   {"INCLUDE_STARS", P_BOOL, &prefs.starflag},
+  {"LENS_KAPPA", P_FLOAT, &prefs.lens_kappa, 0,0, -1.0, 1.0},
+  {"LENS_GAMMA", P_FLOATLIST, prefs.lens_gamma, 0,0, -1.0, 1.0,
+   {""}, 2, 2, &prefs.nlens_gamma},
   {"LF_ALPHA", P_FLOATLIST, prefs.lf_alpha, 0,0, -100.0, 10.0,
    {""}, 1, GAL_MAXNTYPE, &prefs.nlf_alpha},
   {"LF_MAGLIMITS", P_FLOATLIST, prefs.lf_mlim, 0,0, -100.0, 100.0,
@@ -196,6 +199,10 @@ char *default_prefs[] =
 "*                                # x(pixels) y(pixels) z M beta rc(h.^-1 Mpc)...",
 "*                                # ... rmax(h^-1 Mpc) sig_v(h^-1 km/s) M_real...",
 "*                                # ... Ngal rc('') rmax('') ...",
+"*",
+"*#------------------------------- Lensing -------------------------------------",
+"*LENS_KAPPA      0.0             # weak lensing (constant) convergence parameter",
+"*LENS_GAMMA      0.0,0.0         # weak lensing (constant) shear parameters ",
 "*",
 "#------------------------------ Stellar field --------------------------------",
 " ",
