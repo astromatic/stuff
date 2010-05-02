@@ -9,7 +9,7 @@
 *
 *       Contents:       Main loop
 *
-*       Last modify:    11/11/2009
+*       Last modify:    02/05/2010
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -60,7 +60,7 @@ void	makeit(void)
 			z, dz,zlow,zhigh, zmax, dlc, galdens;
    long			nsource;
    int			c,i,g,n,p, npb, ngaltype, ngalsed, nstarsed, ncluster,
-			clustindex;
+			clustindex, shearflag;
 
 /* Processing start date and time */
   thetime = time(NULL);
@@ -90,6 +90,10 @@ void	makeit(void)
   deltaMH = 5*log10(H);	/* Action of H0 on absolute magnitudes */
 
   npb = prefs.npb_name;
+
+/* Constant shear */
+  shearflag = fabs(prefs.lens_gamma[0])>1e-6 || fabs(prefs.lens_gamma[1])>1e-6
+		|| fabs(prefs.lens_kappa)>1e-6 ;
 
 /* First find the largest spread in x and y */
   widthmax = heightmax = -BIG;
@@ -292,6 +296,10 @@ void	makeit(void)
         z = random_double()*(zhigh-zlow)+zlow;
         gal = gal_init(galtype[g], z, mabsmax, pb, npb);
 
+/*------ Add constant shear */
+        if (shearflag)
+          gal_shear(gal, prefs.lens_kappa, prefs.lens_gamma, npb);
+
 /*------ Position */
         x = random_double();
         y = random_double();
@@ -327,6 +335,10 @@ void	makeit(void)
             continue;
           gal = gal_init(galtype[g], z, mabsmax, pb, npb);
           clusters[c]->real_mabs += exp(-0.921034*gal->mabs);
+/*-------- Add constant shear */
+          if (shearflag)
+            gal_shear(gal, prefs.lens_kappa, prefs.lens_gamma, npb);
+
 /*-------- Now in each observed passband */
           for (p=0; p<npb; p++)
             {

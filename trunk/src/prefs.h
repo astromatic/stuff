@@ -9,7 +9,7 @@
 *
 *	Contents:	Include for prefs.c.
 *
-*	Last modify:	11/11/2009
+*	Last modify:	02/05/2010
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -96,6 +96,10 @@ typedef struct
 /* Galaxy clusters */
   char		clusterlist_name[MAXCHAR];/* Cluster list filename (input) */
   char		clusterlistout_name[MAXCHAR];/*Cluster list filename (output)*/
+/* Lensing */
+  double	lens_kappa;		  /* Convergence lensing parameter */
+  double	lens_gamma[2];		  /* Shear lensing parameters */
+  int		nlens_gamma;		  /* Number of shear parameters */
 /* Stars */
   int		starflag;	/* Include stars? */
   double	galcoord[2];	/* Galactic coordinates */
