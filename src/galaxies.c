@@ -239,7 +239,7 @@ Apply a shear term to a galaxy structure.
 */
 void	gal_shear(galstruct *gal, double kappa, double *gamma, int npb)
   {
-   double	a,b,ct,st,mx2,my2,mxy, s11,s12,s21,s22, smx2,smy2,smxy, dm;
+   double	a,b,d, ct,st,mx2,my2,mxy, s11,s12,s21,s22, smx2,smy2,smxy, dm;
    int		p;
 
   s11 = 1.0 - kappa - gamma[0];
@@ -259,8 +259,10 @@ void	gal_shear(galstruct *gal, double kappa, double *gamma, int npb)
     smx2 = mx2*s11*s11+my2*s12*s12+mxy*2.0*s11*s12;
     smy2 = mx2*s21*s21+my2*s22*s22+mxy*2.0*s21*s22;
     smxy = mx2*s11*s21+my2*s12*s22+mxy*(s11*s22+s12*s21);
-    a = sqrt(0.5*(smx2+smy2)+sqrt(0.25*(smx2-smy2)*(smx2-smy2)+smxy*smxy));
-    b = sqrt(smx2+smy2-a*a);
+    d = sqrt(0.25*(smx2-smy2)*(smx2-smy2)+smxy*smxy);
+    a = sqrt(0.5*(smx2+smy2)+d);
+    b = 0.5*(smx2+smy2)-d;
+    b = b>=0? sqrt(b) : 0.0;
     gal->dposang = 28.64789*atan2(2.0*smxy, smx2-smy2);
     gal->dsize = sqrt(a*b);
     gal->dflat = b/a;
@@ -278,8 +280,10 @@ void	gal_shear(galstruct *gal, double kappa, double *gamma, int npb)
     smx2 = mx2*s11*s11+my2*s12*s12;
     smy2 = mx2*s21*s21+my2*s22*s22;
     smxy = mx2*s11*s21+my2*s21*s22+mxy*(s11*s22+s12*s22);
-    a = sqrt(0.5*(smx2+smy2)+sqrt(0.25*(smx2-smy2)*(smx2-smy2)+smxy*smxy));
-    b = sqrt(smx2+smy2-a*a);
+    d = sqrt(0.25*(smx2-smy2)*(smx2-smy2)+smxy*smxy);
+    a = sqrt(0.5*(smx2+smy2)+d);
+    b = 0.5*(smx2+smy2)-d;
+    b = b>=0? sqrt(b) : 0.0;
     gal->bposang = 28.64789*atan2(2*smxy, smx2-smy2);
     gal->bsize = sqrt(a*b);
     gal->bflat = b/a;
