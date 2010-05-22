@@ -1,12 +1,12 @@
 # configure.ac for Stuff
-# (C) E.Bertin 2005-2009
+# (C) E.Bertin 2005-2010
 # Process this file with autoconf to produce a configure script.
 # First, disable the annoying config.cache
 define([AC_CACHE_LOAD],)
 define([AC_CACHE_SAVE],)
 
 # This is your standard Bertin source code...
-AC_INIT(stuff, 1.23.0, [bertin@iap.fr])
+AC_INIT(stuff, 1.23.1, [bertin@iap.fr])
 AC_CONFIG_SRCDIR(src/makeit.c)
 AC_CONFIG_AUX_DIR(autoconf)
 AM_CONFIG_HEADER(config.h)
@@ -84,7 +84,8 @@ AC_STRUCT_TM
 AC_FUNC_ERROR_AT_LINE
 AC_FUNC_MALLOC
 AC_FUNC_REALLOC
-AC_CHECK_FUNCS([getenv floor pow sqrt strchr strcspn strtol])
+AC_CHECK_FUNCS([getenv floor pow sqrt strchr strcspn strtol lgamma \
+	drand48 lrand48 srand48 gettimeofday])
 
 # Set the data directory to a true absolute path
 datadir2=$(URBI_RESOLVE_DIR([$datadir]))
