@@ -9,7 +9,7 @@
 *
 *       Contents:       functions returning random numbers.
 *
-*       Last modify:    26/01/2005
+*       Last modify:    23/05/2010
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -21,12 +21,20 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <time.h>
+#include <sys/time.h>
 
 #include "define.h"
 #include "globals.h"
 #include "random.h"
 
+#ifdef  HAVE_LGAMMA
+#define LOGGAMMA	lgamma
+#else
+#define LOGGAMMA	gammln
+static double		gammln();
+#endif
+
+static int		seed_time(void);
 
 /****** random_gauss ********************************************************
 PROTO   double random_gauss(double sigma)
@@ -51,21 +59,17 @@ double	random_gauss(double sigma)
 
 /****** random_int **********************************************************
 PROTO   int random_int(void)
-PURPOSE Generate a random integer over (at least) the range [0,32757].
+PURPOSE Generate a random integer over the range [0,2^31].
 INPUT   -.
 OUTPUT  Random integer number with uniform distribution.
 NOTES   The actual upper bound of the range is implementation-dependent.
-AUTHOR  E. Bertin (IAP, Leiden observatory & ESO)
-VERSION 29/10/97
+AUTHOR  E. Bertin (IAP)
+VERSION 23/05/2010
 */
 int	random_int(void)
   {
-#if defined	HP_UX
+#if defined	HAVE_LRAND48
   return (int)lrand48();
-#elif defined	SUN_OS
-  return (int)random();
-#elif defined	DEC_ALPHA
-  return (int)random();
 #else
   return (int)rand();
 #endif
@@ -78,20 +82,37 @@ PURPOSE Generate a random number with uniform distribution over [0.0,1.0[
 INPUT   -.
 OUTPUT  Random double with uniform distribution.
 NOTES   -.
-AUTHOR  E. Bertin (IAP, Leiden observatory & ESO)
-VERSION 29/10/97
+AUTHOR  E. Bertin (IAP)
+VERSION 22/05/2010
 */
 double	random_double(void)
   {
-#if defined	HP_UX
-  return	drand48();
-#elif defined	SUN_OS
-  return (double)random() / (0x7fffffffL+1.0);
-#elif defined	DEC_ALPHA
-  return (double)random() / (0x7fffffffL+1.0);
+
+#if defined	HAVE_DRAND48
+  return (double)drand48();
 #else
   return (double)rand() / RAND_MAX;
 #endif
+  }
+
+
+/****i* seed_time **********************************************************
+PROTO   int seed_time(void)
+PURPOSE Return a random generator seed based on current time.
+INPUT   -.
+OUTPUT  Integer based on current number of microseconds.
+NOTES   -.
+AUTHOR  E. Bertin (IAP)
+VERSION 23/05/2010
+*/
+int	seed_time(void)
+  {
+   struct timeval	tp;
+   struct timezone	tzp;
+   int			dummy;
+
+  dummy = gettimeofday(&tp,&tzp);
+  return (int)tp.tv_usec;
   }
 
 
@@ -104,31 +125,21 @@ NOTES   The seed is used to initialize the random sequence at a particular
         position, which is implementation-dependent. If seed = 0, then the
         actual seed is taken from the time() function (which varies each
         second).
-AUTHOR  E. Bertin (IAP, Leiden observatory & ESO)
-VERSION 29/10/97
+AUTHOR  E. Bertin (IAP)
+VERSION 23/05/2010
 */
 void	init_random(int seed)
   {
-#if defined	HP_UX
+#if defined	HAVE_SRAND48
   if (seed)
-    srand48(seed);
+    srand48((long)seed);
   else
-    srand48((long)time(NULL));
-#elif defined	SUN_OS
-  if (seed)
-    srandom(seed);
-  else
-    srandom((int)time(NULL));
-#elif defined	DEC_ALPHA
-  if (seed)
-    srandom(seed);
-  else
-    srandom((int)time(NULL));
+    srand48((long)seed_time());
 #else
   if (seed)
     srand((unsigned int)seed);
   else
-    srand((unsigned int)time(NULL));
+    srand((unsigned int)seed_time());
 #endif
 
   return;
@@ -169,8 +180,8 @@ PURPOSE Returns a random number with Poisson deviate (from Num. Recipes in C.,
 INPUT   Mean of the Poisson distribution.
 OUTPUT  A double containing the integer (!) variable with Poisson deviate.
 NOTES   I am still searching for a faster algorithm!!
-AUTHOR  E. Bertin (IAP, Leiden observatory & ESO)
-VERSION 29/10/97
+AUTHOR  E. Bertin (IAP)
+VERSION 23/05/2010
 */
 double	random_poisson(double xm)
   {
@@ -200,7 +211,7 @@ double	random_poisson(double xm)
       oldm=xm;
       sq=sqrt(2.0*xm);
       alxm=log(xm);
-      g=xm*alxm-gammln(xm+1.0);
+      g=xm*alxm-LOGGAMMA(xm+1.0);
       }
     do
       {
@@ -210,7 +221,7 @@ double	random_poisson(double xm)
         em=sq*y+xm;
         } while (em < 0.0);
       em=floor(em);
-      t=0.9*(1.0+y*y)*exp(em*alxm-gammln(em+1.0)-g);
+      t=0.9*(1.0+y*y)*exp(em*alxm-LOGGAMMA(em+1.0)-g);
       } while (random_double() > t);
     }
 

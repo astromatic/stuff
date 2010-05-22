@@ -9,7 +9,7 @@
 *
 *	Contents:	Global declarations.
 *
-*	Last modify:	26/01/2005
+*	Last modify:	23/05/2010
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -25,3 +25,6 @@ extern	void	error(int, char *, char *),
 		makeit(void),
 		swapbytes(void *ptr, int nb, int n),
 		warning(char *msg1, char *msg2);
+
+extern double	counter_seconds(void);
+

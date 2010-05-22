@@ -9,7 +9,7 @@
 *
 *       Contents:       Main loop
 *
-*       Last modify:    02/05/2010
+*       Last modify:    23/05/2010
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 */
@@ -27,6 +27,7 @@
 #include <string.h>
 #include <math.h>
 #include <time.h>
+#include <sys/time.h>
 
 #include "define.h"
 #include "globals.h"
@@ -57,13 +58,14 @@ void	makeit(void)
 			yscale[SED_MAXNPB], yoffset[SED_MAXNPB];
    double		mabsmax, dn, bt, kb,kd,kt,
 			width,height, widthmax,heightmax, x,y, xp,yp, domega,
-			z, dz,zlow,zhigh, zmax, dlc, galdens;
+			z, dz,zlow,zhigh, zmax, dlc, galdens, dtime;
    long			nsource;
    int			c,i,g,n,p, npb, ngaltype, ngalsed, nstarsed, ncluster,
 			clustindex, shearflag;
 
 /* Processing start date and time */
   thetime = time(NULL);
+  dtime = counter_seconds();
   tm = localtime(&thetime);
   sprintf(prefs.sdate_start,"%04d-%02d-%02d",
 	tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday);
@@ -405,8 +407,28 @@ void	makeit(void)
 	tm->tm_year+1900, tm->tm_mon+1, tm->tm_mday);
   sprintf(prefs.stime_end,"%02d:%02d:%02d",
 	tm->tm_hour, tm->tm_min, tm->tm_sec);
-  prefs.time_diff = difftime(thetime2, thetime);
+  prefs.time_diff = counter_seconds() - dtime;
 
   return;
   }
+
+/****** counter_seconds *******************************************************
+PROTO	double counter_seconds(void)
+PURPOSE	Count the number of seconds (with an arbitrary offset).
+INPUT	-.
+OUTPUT	Returns a number of seconds.
+NOTES	Results are meaningful only for tasks that take one microsec or more.
+AUTHOR	E. Bertin (IAP)
+VERSION	24/09/2009
+ ***/
+double	counter_seconds(void)
+  {
+   struct timeval	tp;
+   struct timezone	tzp;
+   int			dummy;
+
+  dummy = gettimeofday(&tp,&tzp);
+  return (double) tp.tv_sec + (double) tp.tv_usec * 1.0e-6;
+  }
+
 
