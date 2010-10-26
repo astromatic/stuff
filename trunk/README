@@ -1,11 +1,11 @@
 Stuff is a program that generates artificial but realistic
-catalogs of astronomical sources. These catalogs can be loaded
+catalogues of astronomical sources. These catalogs can be loaded
 in SkyMaker to generate image simulations.
 
 This file describes shortly the syntax of Stuff.
 See INSTALL for instructions about install.
 For more information, please refer to the documentation
-(see http://astromatic.iap.fr/software/stuff/ )
+(see http://astromatic.net/software/stuff/ )
 
 The general syntax is similar to that of SkyMaker:
 
@@ -21,6 +21,7 @@ The general syntax is similar to that of SkyMaker:
 
 prints a default configuration file on the standard output
 
-Please report any bug or strange behaviour to bertin@iap.fr.
+Please report any bug or strange behaviour to the Stuff forum:
+http://astromatic.net/forum
 
 						Emmanuel Bertin <bertin@iap.fr>

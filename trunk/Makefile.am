@@ -1,10 +1,36 @@
-# Main Makefile for Stuff
-# Copyright (C) 2005-2009 Emmanuel Bertin.
+#
+#				Makefile.am
+#
+# Main Makefile. Process this file with automake to generate a Makefile
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#
+#	This file part of:	Stuff
+#
+#	Copyright:		(C) 2005-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+#
+#	License:		GNU General Public License
+#
+#	Stuff is free software: you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation, either version 3 of the License, or
+# 	(at your option) any later version.
+#	Stuff is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+#	You should have received a copy of the GNU General Public License
+#	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
+#
+#	Last modified:		26/10/2010
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 AUTOMAKE_OPTIONS	= foreign no-dependencies
 SUBDIRS			= man src
 EXTRA_DIST		= data doc \
 			  AUTHORS BUGS ChangeLog COPYRIGHT \
-			  HISTORY INSTALL README THANKS \
+			  HISTORY INSTALL LICENSE README THANKS \
 			  acx_pthread.m4 acx_prog_cc_optim.m4
 RPM_ROOTDIR		= `rpmbuild --nobuild -E %_topdir`
 RPM_SRCDIR		= $(RPM_ROOTDIR)/SOURCES

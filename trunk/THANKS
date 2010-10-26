@@ -2,12 +2,18 @@ Ville Laurikari	<vl@iki.fi>
 	For his VL_PROG_CC_WARNINGS (modified to ACX_PROG_CC_OPTIM)
 
 Steven G. Johnson <stevenj@alum.mit.edu>	
-	For his acx_pthread.m4
+	For his AX_PTHREAD configuration script
 
 Stéphane Arnouts <Stephane.Arnouts@oamp.fr>
 Roser Pelló <roser@obs-mip.fr>
-	For providing their compilations of SEDs and filter passbands
+	For providing compilations of SEDs and filter passbands
 
 Thomas Erben <terben@astro.uni-bonn.de>
 Ludovic van Waerbeke <waerbeke@physics.ubc.ca>
+Jennifer M. Piel <jpiel@astro.uni-bonn.de>
 	Help in discovering bugs or bringing suggestions
+
+Institut d'Astrophysique de Paris
+TERAPIX project
+        Financial and technical support
+

@@ -1,18 +1,31 @@
 /*
-                                  random.c
+*				random.c
+*
+* Random number generators.
+*
+*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+*
+*	This file part of:	Stuff
+*
+*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*
+*	License:		GNU General Public License
+*
+*	Stuff is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*	Stuff is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*	You should have received a copy of the GNU General Public License
+*	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
+*
+*	Last modified:		26/10/2010
+*
+*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
-*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-*
-*       Part of:        Stuff
-*
-*       Author:         E.BERTIN (IAP)
-*
-*       Contents:       functions returning random numbers.
-*
-*       Last modify:    23/05/2010
-*
-*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-*/
 
 #ifdef HAVE_CONFIG_H
 #include	"config.h"
@@ -42,8 +55,8 @@ PURPOSE Generate a random number with a (centered) Gaussian pdf.
 INPUT   Standard deviation.
 OUTPUT  Gauss-distributed random number.
 NOTES   -.
-AUTHOR  E. Bertin (IAP, Leiden observatory & ESO)
-VERSION 29/10/97
+AUTHOR  E. Bertin (IAP)
+VERSION 29/10/1997
 */
 double	random_gauss(double sigma)
   {
@@ -148,12 +161,13 @@ void	init_random(int seed)
 
 /****i* gammln ***************************************************************
 PROTO   double gammln(double xx)
-PURPOSE Returns the log of the Gamma function (from Num. Recipes in C, p.168).
+PURPOSE Returns the log of the Gamma function (based on algorithm described in
+	Numerical Recipes in C, chap 6.1).
 INPUT   A double.
 OUTPUT  Log of the Gamma function.
 NOTES   -.
-AUTHOR  E. Bertin (IAP, Leiden observatory & ESO)
-VERSION 29/10/97
+AUTHOR  E. Bertin (IAP)
+VERSION 12/10/2010
 */
 double	gammln(double xx)
 
@@ -175,20 +189,20 @@ double	gammln(double xx)
 
 /****** random_poisson *******************************************************
 PROTO   double random_double(double xm)
-PURPOSE Returns a random number with Poisson deviate (from Num. Recipes in C.,
-        p.222) centered on xm.
+PURPOSE Returns a random number with Poisson deviate (based on algorithm
+	described in Numerical Recipes in C, chap. 7) centered on xm.
 INPUT   Mean of the Poisson distribution.
 OUTPUT  A double containing the integer (!) variable with Poisson deviate.
 NOTES   I am still searching for a faster algorithm!!
 AUTHOR  E. Bertin (IAP)
-VERSION 23/05/2010
+VERSION 23/04/2010
 */
 double	random_poisson(double xm)
   {
-   static double	sq,alxm,g,oldm=(-1.0);
-   double		em,t,y;
-   double		gammln();
+   double		sq,alxm,g,oldm,em,t,y;
 
+  sq = alxm = g = 0.0;
+  oldm = -1.0;
   if (xm < 12.0)
     {
     if (xm != oldm)
