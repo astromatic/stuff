@@ -1,18 +1,30 @@
- /*
- 				prefs.h
-
-*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+/*
+*				preflist.h
 *
-*	Part of:	Stuff
+* Include file for preflist.c.
 *
-*	Author:		E.BERTIN (IAP)
+*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 *
-*	Contents:	Include for prefs.c.
+*	This file part of:	Stuff
 *
-*	Last modify:	02/05/2010
+*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
-*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-*/
+*	License:		GNU General Public License
+*
+*	Stuff is free software: you can redistribute it and/or modify
+*	it under the terms of the GNU General Public License as published by
+*	the Free Software Foundation, either version 3 of the License, or
+*	(at your option) any later version.
+*	Stuff is distributed in the hope that it will be useful,
+*	but WITHOUT ANY WARRANTY; without even the implied warranty of
+*	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+*	GNU General Public License for more details.
+*	You should have received a copy of the GNU General Public License
+*	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
+*
+*	Last modified:		26/10/2010
+*
+*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #ifndef _GALAXIES_H_
 #include "galaxies.h"
@@ -114,7 +126,7 @@ typedef struct
   char		stime_start[12];		/* SCAMP start time */
   char		sdate_end[12];			/* SCAMP end date */
   char		stime_end[12];			/* SCAMP end time */
-  int		time_diff;			/* Execution time */
+  double	time_diff;			/* Execution time */
   }	prefstruct;
 
 prefstruct	prefs;

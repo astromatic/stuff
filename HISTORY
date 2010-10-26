@@ -1,3 +1,15 @@
+November 2009: V1.22
+	- Allowed more than 8 passbands
+	- Replaced SED_CALIB with CALIBSED_REF and CALIBSED_OBS
+	- New RPM packaginh
+
+December 2007: V1.17
+	- New filter curves
+	- Fixed offset bug in distance modulus
+
+November 2005: V1.13
+	- Added galaxy LF evolution
+
 November 26, 2001: V1.10
 	- Added magnitude zero-point and sky brightness computations
 

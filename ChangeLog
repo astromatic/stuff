@@ -1,18 +1,92 @@
-/*
-                                ChangeLog
+#
+#				ChangeLog
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+#
+#	This file part of:	Stuff
+#
+#	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+#
+#	License:		GNU General Public License
+#
+#	Stuff is free software: you can redistribute it and/or modify
+#	it under the terms of the GNU General Public License as published by
+#	the Free Software Foundation, either version 3 of the License, or
+# 	(at your option) any later version.
+#	Stuff is distributed in the hope that it will be useful,
+#	but WITHOUT ANY WARRANTY; without even the implied warranty of
+#	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#	GNU General Public License for more details.
+#	You should have received a copy of the GNU General Public License
+#	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
+#
+#	Last modified:		14/10/2010
+#
+#%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-*
-*       Part of:        Stuff
-*
-*       Author:         E. BERTIN (IAP)
-*
-*       Contents:       log of changes made to the Stuff source
-*
-*       Last modify:    02/12/2007
-*
-*%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-*/
+------------------------------------------------------------------------
+r23 | bertin | 2009-11-11 20:01:18 +0100 (Wed, 11 Nov 2009) | 3 lines
+
+Removed SED_CALIB pref keyword and "replaced" it with CALIBSED_REF and CALIBSED_
+OBS keywords.
+Pushed version number to 1.22.0.
+
+------------------------------------------------------------------------
+r22 | bertin | 2009-09-10 19:31:50 +0200 (Thu, 10 Sep 2009) | 6 lines
+
+Added --enable-auto-flags.
+Added --enable-best-link configure option.
+Added rpm-best option in Makefile.am.
+Cleaned up configure file.
+Pushed version number to 1.21,
+
+------------------------------------------------------------------------
+r21 | bertin | 2009-08-20 13:13:32 +0200 (Thu, 20 Aug 2009) | 2 lines
+
+Fixed bug when using >8 passbands (thanks to J.Piel).
+
+------------------------------------------------------------------------
+r20 | bertin | 2009-08-05 10:20:53 +0200 (Wed, 05 Aug 2009) | 4 lines
+
+Pushed maximum number of bands to 16.
+Used less ambiguous algorithm for the byte-swapping routine.
+Removed useless check in sed_load().
+
+------------------------------------------------------------------------
+r18 | bertin | 2009-04-09 15:52:40 +0200 (Thu, 09 Apr 2009) | 4 lines
+
+Fixed references to COPYRIGHT file.
+Fixed RPM data installation problem.
+Pushed version number to 1.19.
+
+------------------------------------------------------------------------
+r17 | bertin | 2009-04-01 18:45:31 +0200 (Wed, 01 Apr 2009) | 7 lines
+
+Set License string to CeCILL in the .spec file.
+Fixed rpm build issue on Fedora Core 10.
+Fixed display of max thread number in configure help.
+Cleaned up Makefile.am RPM options.
+Updated icc compilation flags to 11.0 syntax.
+Cleaned up obsolete references.
+
+------------------------------------------------------------------------
+r15 | root | 2009-01-09 17:25:18 +0100 (Fri, 09 Jan 2009) | 1 line
+
+Changed trunk directory name
+------------------------------------------------------------------------
+r14 | bertin | 2008-10-02 18:11:33 +0200 (Thu, 02 Oct 2008) | 7 lines
+
+Updated autotools scripts (thanks to Greg Daues for pointing this out).
+Removed stuff-mp spec file (merged now with stuff.spec).
+Updated compiler autoconfiguration script.
+Updated .spec RPM script.
+Added rpm-icc target.
+Version is now 1.18
+
+------------------------------------------------------------------------
+r13 | bertin | 2008-08-10 10:39:53 +0200 (Sun, 10 Aug 2008) | 2 lines
+
+Added Megaprime i2 filter (thanks to P.Hudelot).
 
 ------------------------------------------------------------------------
 r676 | bertin | 2007-12-02 18:24:38 +0100 (Sun, 02 Dec 2007) | 3 lines
@@ -44,7 +118,8 @@ Y H J Ks WIRCam filter curves added.
 ------------------------------------------------------------------------
 r651 | bertin | 2007-11-05 19:54:38 +0100 (Mon, 05 Nov 2007) | 2 lines
 
-Rewrote configure.ac to include data dir in RPM distribution and allow the executable to be compiiled with icc.
+Rewrote configure.ac to include data dir in RPM distribution and allow the
+executable to be compiiled with icc.
 
 ------------------------------------------------------------------------
 r504 | marmo | 2007-06-19 20:29:16 +0200 (Tue, 19 Jun 2007) | 1 line
