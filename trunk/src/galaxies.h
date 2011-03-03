@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2011 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		03/03/2011
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -42,8 +42,6 @@
 #define	GAL_MAXNTYPE	8	/* Maximum number of distinct galaxy types */
 #define	GAL_MAXNSED	8	/* Maximum number of galaxy SED components */
 
-#define	GAL_BULGEMKNEE	(-20.0)	/* Abs. mag at knee in Binggeli et al. 84 */
-#define	GAL_BULGERKNEE	1581.0	/* r_e (in h-1.pc) at knee in Binggeli et al */
 #define	GAL_BULGEQMEAN	0.65	/* Mean of intrinsic bulge flattening distr. */
 #define	GAL_BULGEQSIG	0.18	/* Sigma of bulge flattening distribution */
 
@@ -64,6 +62,7 @@ typedef struct
   double	disk_rstar;	/* Disk scale-length */
   double	disk_sigmalambda;
   double	disk_taufact;	/* Extinction factor in the ref. band */
+  double	bulge_rstar;	/* Bulge effective radius */
   sedstruct	*bsed;	/* Bulge SED */
   sedstruct	*dsed;	/* Disk SED */
   sedstruct	*tau_i;	/* Disk extinction curve */
@@ -92,7 +91,7 @@ galstruct	*gal_init(galtypestruct *galtype, double z, double mabsmax,
 			sedstruct **pb, int npb);
 
 double		gal_bulgeflat(double cosi),
-		gal_bulgesize(double mabs),
+		gal_bulgesize(galtypestruct *galtype, double mabs),
 		gal_disksize(galtypestruct *galtype, double mabs),
 		gal_cosi(void);
 

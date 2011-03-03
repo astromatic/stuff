@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2011 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		03/03/2011
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -74,10 +74,11 @@ galtypestruct	*galtype_init(double hubtype, double bt, double extinct,
   galtype->lf->mstar -= 2.5*log10(1.0+(1.0-bt)
 			*DEXP(0.12041*extinct));
 /* Subtract from M* the average disk extinction to get the face-on value */
-  galtype->beta = prefs.gal_beta;
+  galtype->beta = prefs.gal_dbeta;
 /* The 1.67835 is here to convert the effective radius to a scale length */
-  galtype->disk_rstar = prefs.gal_rstar*KPC/H/1.67835;
-  galtype->disk_sigmalambda = prefs.gal_sigmalambda;
+  galtype->disk_rstar = prefs.gal_drstar*KPC/H/1.67835;
+  galtype->disk_sigmalambda = prefs.gal_dsigmalambda;
+  galtype->bulge_rstar = prefs.gal_brknee*KPC/H;
   galtype->bsed = sed_dup(bsed);
   galtype->dsed = sed_dup(dsed);
   galtype->tau_i = sed_dup(tau_i);
@@ -133,12 +134,12 @@ void	gal_end(galstruct *gal)
 Returns the average bulge size (in m) as a function of the absolute magnitude.
 From Fig. 7 in Binggeli et al. (1984).
 */
-double gal_bulgesize(double mabs)
+double gal_bulgesize(galtypestruct *galtype, double mabs)
   {
 /* Subtract the log10(re) = f(Mabs) knee from the absolute magnitude */
-  mabs -= GAL_BULGEMKNEE + deltaMH;
+  mabs -= prefs.gal_bmknee + deltaMH;
 
-  return GAL_BULGERKNEE*DEXP(-(mabs<0.0? 0.3:0.1)*mabs)*PC/H;
+  return galtype->bulge_rstar*DEXP(-(mabs<0.0? 0.3:0.1)*mabs)/H;
   }
 
 
@@ -218,12 +219,12 @@ galstruct *gal_init(galtypestruct *galtype, double z, double mabsmax,
 /* Disk SED (absorption) */
   sed_extinc(galtype->dsed, galtype->tau_i,
 	galtype->disk_taufact*log(gal->dflat), &dsed);
-/* Angular distance element (in arcsec/m)*/
+/* Angular distance element (in m/arcsec)*/
   da = cosmo_dlum(z)*ARCSEC/((1.0+z)*(1.0+z));
 /* Compensate for increase of surface brightness due to luminosity evolution */
   dm = lfevol.dmstar;
-  gal->bsize = gal_bulgesize(mabsb-dm)/da;
-  gal->dsize = gal_disksize(galtype, mabsd-dm)/da;
+  gal->bsize = gal_bulgesize(galtype, mabsb-dm)/da*pow(1.0+z, prefs.gal_brevol);
+  gal->dsize = gal_disksize(galtype, mabsd-dm)/da*pow(1.0+z, prefs.gal_drevol);
   bt = galtype->bt;
 /* Now in each observed passband */
   for (p=0; p<npb; p++)

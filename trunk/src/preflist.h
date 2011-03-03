@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2011 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		03/03/2011
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -56,11 +56,12 @@ pkeystruct key[] =
   {"COLLECT_AREA", P_FLOATLIST, prefs.area, 0,0, 0.0, BIG,
    {""}, 1, SED_MAXNPB, &prefs.narea},
   {"DATA_DIRECTORY", P_STRING, prefs.datadir_name},
-  {"DISK_BETA", P_FLOAT, &prefs.gal_beta, 0,0, -100,-0.001},
+  {"DISK_BETA", P_FLOAT, &prefs.gal_dbeta, 0,0, -100,-0.001},
   {"DISK_EXTINCT", P_FLOATLIST, prefs.gal_iextinc, 0,0, 0.0, BIG,
    {""}, 1, GAL_MAXNTYPE, &prefs.ngal_iextinc},
-  {"DISK_RSTAR", P_FLOAT, &prefs.gal_rstar, 0,0, 0.0, 1e12},
-  {"DISK_SIGMAL", P_FLOAT, &prefs.gal_sigmalambda, 0,0, 0.0, 1e12},
+  {"DISK_REVOL", P_FLOAT, &prefs.gal_drevol, 0,0, -10.0,10.0},
+  {"DISK_RSTAR", P_FLOAT, &prefs.gal_drstar, 0,0, 0.0, 1e12},
+  {"DISK_SIGMAL", P_FLOAT, &prefs.gal_dsigmalambda, 0,0, 0.0, 1e12},
   {"DISTANCE_STEP", P_FLOAT, &prefs.integ_zstep, 0,0, 0.0, 10000.0},
   {"EXTINCT_NAME", P_STRING, prefs.extinct_name},
   {"GAIN", P_FLOATLIST, prefs.gain,  0,0, 0.0, BIG,
@@ -115,6 +116,9 @@ pkeystruct key[] =
    {""}, 1, GAL_MAXNTYPE, &prefs.ngal_dsedno},
   {"SEED_GALAXIES", P_INT, &prefs.galseed, 0, 0x7fffffffL},
   {"SEED_STARS", P_INT, &prefs.starseed, 0, 0x7fffffffL},
+  {"SPHEROID_REVOL", P_FLOAT, &prefs.gal_brevol, 0,0, -10.0,10.0},
+  {"SPHEROID_RKNEE", P_FLOAT, &prefs.gal_brknee, 0,0, 0.0, 1e12},
+  {"SPHEROID_MKNEE", P_FLOAT, &prefs.gal_bmknee, 0,0, -100.0,100.0},
   {"VERBOSE_TYPE", P_KEY, &prefs.verbose_type, 0,0, 0.0,0.0,
    {"QUIET","NORMAL","FULL",""}},
 
@@ -194,13 +198,23 @@ char *default_prefs[] =
 "DISK_EXTINCT    0.0,0.75,1.23,1.47,1.47,1.23",
 "                                # de Vaucouleurs' alpha (extinction parameter)",
 " ",
-"*#------------------------------- Disk sizes ----------------------------------",
+"*#------------------------------- Disk sizes ---------------------------------",
 "*",
 "*DISK_BETA       -0.214          # Beta parameter of the disk size distribution",
 "*DISK_RSTAR      3.85            # re* parameter of the disk size distribution",
 "*                                # (h-1.kpc) (see de Jong & Lacey 2000)",
+"*DISK_REVOL      -0.40           # re* evolution factor dln(re*)/dln(1+z)",
+"*                                # (see e.g. Trujillo et al. 2006)",
 "*DISK_SIGMAL     0.36            # sigma_lambda parameter of the disk size",
 "*                                # distribution (see de Jong & Lacey 2000)",
+"*",
+"*#----------------------------- Spheroid sizes -------------------------------",
+"*",
+"*SPHEROID_MKNEE  -20.0           # Abs. mag. at knee (Binggeli et al. 1984)",
+"*SPHEROID_RKNEE  1.58            # re* parameter of spheroid size distribution",
+"*                                # (h-1.kpc) (see Binggeli et al. 1984)",
+"*SPHEROID_REVOL  -0.50           # re* evolution factor dln(re*)/dln(1+z)",
+"*                                # (see e.g. Trujillo et al. 2006)",
 "*",
 "*#--------------------------- Galaxy clusters ---------------------------------",
 "*",

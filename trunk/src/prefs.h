@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2011 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		03/03/2011
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -102,9 +102,13 @@ typedef struct
   double	gal_bt[GAL_MAXNTYPE];	  /* B/T ratios */
   int		ngal_bt;		  /* Number of B/T's */
   int		gal_ntype;		  /* Total number of galaxy types */
-  double	gal_beta;		  /* Tully-Fisher's beta */
-  double	gal_rstar;		  /* Disk effective radius at M* */
-  double	gal_sigmalambda;	  /* Dispersion of disk radii */
+  double	gal_dbeta;		  /* Tully-Fisher's beta */
+  double	gal_drstar;		  /* Disk effective radius at M* */
+  double	gal_drevol;		  /* Disk radius evolution parameter */
+  double	gal_dsigmalambda;	  /* Dispersion of disk radii */
+  double	gal_bmknee;		  /* Binggeli's abs. magnitude at knee*/
+  double	gal_brknee;		  /* Binggeli's eff. radius at knee */
+  double	gal_brevol;		  /* Bulge radius evolution parameter */
 /* Galaxy clusters */
   char		clusterlist_name[MAXCHAR];/* Cluster list filename (input) */
   char		clusterlistout_name[MAXCHAR];/*Cluster list filename (output)*/
