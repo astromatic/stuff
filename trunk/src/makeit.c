@@ -323,7 +323,6 @@ void	makeit(void)
 /*-------- Position in pixel coordinates*/
           xp = x*xscale[p]-xoffset[p];
           yp = y*yscale[p]-yoffset[p];
-/*
           fprintf(catfile[p],
 		"200 %10.3f %10.3f %8.4f %5.3f "
 		"%9.3f %5.3f %+7.2f %9.3f %5.3f %+7.2f %8.5f %+5.1f\n",
@@ -332,17 +331,6 @@ void	makeit(void)
 		gal->bsize, gal->bflat, gal->bposang,
 		gal->dsize, gal->dflat, gal->dposang,
 		z, galtype[g]->hubtype);
-*/
-fprintf(catfile[p],
-"200 %10.3f %10.3f %8.4f %5.3f "
-"%9.3f %5.3f %+7.2f %9.3f %5.3f %+7.2f %8.5f %+5.1f %10.3f %g\n",
-xp,yp,
-gal->mag[p], gal->bt[p],
-gal->bsize, gal->bflat, gal->bposang,
-gal->dsize, gal->dflat, gal->dposang,
-z, galtype[g]->hubtype,
-gal->mabs, gal->bsize*cosmo_dlum(z)*ARCSEC/((1.0+z)*(1.0+z))/KPC);
-
           }
         gal_end(gal);
         }
