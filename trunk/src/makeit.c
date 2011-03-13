@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2011 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		13/03/2011
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -324,7 +324,7 @@ void	makeit(void)
           xp = x*xscale[p]-xoffset[p];
           yp = y*yscale[p]-yoffset[p];
           fprintf(catfile[p],
-		"200 %10.3f %10.3f %8.4f %5.3f "
+		"200 %11.4f %11.4f %8.4f %5.3f "
 		"%9.3f %5.3f %+7.2f %9.3f %5.3f %+7.2f %8.5f %+5.1f\n",
 		xp,yp,
 		gal->mag[p], gal->bt[p],
@@ -360,12 +360,12 @@ void	makeit(void)
             xp = clusters[c]->x + x/prefs.pixscale[p];
             yp = clusters[c]->y + y/prefs.pixscale[p];
             fprintf(catfile[p],
-		"200 %10.3f %10.3f %8.4f %5.3f "
-		"%9.3f %5.3f %+7.2f %9.3f %5.3f %+7.2f %8.5f\n",
+		"200 %11.4f %11.4f %8.4f %5.3f "
+		"%9.3f %5.3f %+7.2f %9.3f %5.3f %+7.2f %8.5f %+5.1f\n",
 		xp,yp,
 		gal->mag[p], gal->bt[p],
 		gal->bsize, gal->bflat, gal->bposang,
-		gal->dsize, gal->dflat, gal->dposang, z);
+		gal->dsize, gal->dflat, gal->dposang, z, galtype[g]->hubtype);
             }
           gal_end(gal);
           }
