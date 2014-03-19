@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2011 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		13/03/2011
+*	Last modified:		27/05/2013
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -47,6 +47,7 @@
 #include "clusters.h"
 #include "cosmo.h"
 #include "galaxies.h"
+#include "igm.h"
 #include "lf.h"
 #include "random.h"
 #include "sed.h"
@@ -57,9 +58,11 @@ void	makeit(void)
    clusterstruct	**clusters;
    galtypestruct	**galtype;
    galstruct		*gal;
-   sedstruct		*pb[SED_MAXNPB],*pbcalibsed[SED_MAXNPB],
+   sedstruct		*pb[SED_MAXNPB],*pbcorr[SED_MAXNPB],
+			*pbcalibsed[SED_MAXNPB],
 			*galsed[GAL_MAXNSED], *starsed[STAR_MAXNSED],
-			*refcalibsed, *refpb, *tau_i, *bsed,*dsed, *backsed;
+			*refcalibsed, *refpb, *tau_i, *tau_igm,
+			*bsed,*dsed, *backsed;
    lfstruct		*lf, *lfevol;
    time_t		thetime, thetime2;
    struct tm		*tm;
@@ -270,6 +273,18 @@ void	makeit(void)
     sprintf(gstr, "Generating galaxies... z =%6.2f", z);
     NFPRINTF(OUTPUT, gstr)
 
+/*-- Compute corrected passbands because of IGM opacity */
+    if (prefs.igm_type != IGM_NONE)
+      {
+      tau_igm = sed_igmmadauextinct(zlow);
+      for (p=0; p<npb; p++)
+        pbcorr[p] = sed_extinc(pb[p], tau_igm, 1.0);
+      sed_end(tau_igm);
+      }
+    else
+      for (p=0; p<npb; p++)
+        pbcorr[p] = pb[p];
+
 /*-- Normalize cluster densities */
     for (c=clustindex ;c<ncluster && clusters[c]->z > zlow; c++)
       cluster_normdens(clusters[c], galtype, ngaltype);
@@ -281,7 +296,7 @@ void	makeit(void)
       bt = galtype[g]->bt;
       if (zlow>0.0)
         {
-/*------ Compute the minimum absolute magnitude of detectable galaxies */
+/*------ Compute a lower limit to the brigthness of detectable galaxies */
 /*------ Linear k-corrections for bulge and disk */
         kb = bt>0.0? sed_kcor(galtype[g]->bsed, refpb, zlow) : 1.0;
         kd = bt<1.0? sed_kcor(galtype[g]->dsed, refpb, zlow) : 1.0;
@@ -308,7 +323,7 @@ void	makeit(void)
         {
 /*------ Redshift */
         z = random_double()*(zhigh-zlow)+zlow;
-        gal = gal_init(galtype[g], z, mabsmax, pb, npb);
+        gal = gal_init(galtype[g], z, mabsmax, pbcorr, npb);
 
 /*------ Add constant shear */
         if (shearflag)
@@ -347,7 +362,7 @@ void	makeit(void)
           cluster_rndgalpos(clusters[c], &x, &y, &z);
           if (z<=0.0)
             continue;
-          gal = gal_init(galtype[g], z, mabsmax, pb, npb);
+          gal = gal_init(galtype[g], z, mabsmax, pbcorr, npb);
           clusters[c]->real_mabs += exp(-0.921034*gal->mabs);
 /*-------- Add constant shear */
           if (shearflag)
@@ -376,6 +391,9 @@ void	makeit(void)
       if (clusters[c]->real_ngal)
         clusters[c]->real_mabs = -2.5*log10(clusters[c]->real_mabs);
     clustindex = c;
+    for (p=0; p<npb; p++)
+      if (pbcorr[p] != pb[p])
+        sed_end(pbcorr[p]);
     }
 
   NFPRINTF(OUTPUT,"");

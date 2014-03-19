@@ -1,4 +1,4 @@
-.TH SCAMP "1" "@DATE3@" "STUFF @PACKAGE_VERSION@" "User Commands"
+.TH STUFF "1" "@DATE3@" "Stuff @PACKAGE_VERSION@" "User Commands"
 .SH NAME
 stuff \- generate artificial catalogs of astronomical sources
 .SH SYNOPSIS

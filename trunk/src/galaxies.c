@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2011 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		03/03/2011
+*	Last modified:		28/05/2013
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -217,8 +217,8 @@ galstruct *gal_init(galtypestruct *galtype, double z, double mabsmax,
   gal->dflat = gal_cosi();
   gal->bflat = gal_bulgeflat(gal->dflat);
 /* Disk SED (absorption) */
-  sed_extinc(galtype->dsed, galtype->tau_i,
-	galtype->disk_taufact*log(gal->dflat), &dsed);
+  dsed = sed_extinc(galtype->dsed, galtype->tau_i,
+		galtype->disk_taufact*log(gal->dflat));
 /* Angular distance element (in m/arcsec)*/
   da = cosmo_dlum(z)*ARCSEC/((1.0+z)*(1.0+z));
 /* Compensate for increase of surface brightness due to luminosity evolution */
