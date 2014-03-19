@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2011 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,12 +22,15 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		03/03/2011
+*	Last modified:		28/05/2013
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #ifndef _GALAXIES_H_
 #include "galaxies.h"
+#endif
+#ifndef _IGM_H_
+#include "igm.h"
 #endif
 #ifndef _STARS_H_
 #include "stars.h"
@@ -35,8 +38,6 @@
 #ifndef _SED_H_
 #include "sed.h"
 #endif
-
-typedef enum {DETECT_PHOTONS, DETECT_ENERGY}	detenum;
 
 /*------------------------------- preferences -------------------------------*/
 typedef struct
@@ -112,6 +113,8 @@ typedef struct
 /* Galaxy clusters */
   char		clusterlist_name[MAXCHAR];/* Cluster list filename (input) */
   char		clusterlistout_name[MAXCHAR];/*Cluster list filename (output)*/
+/* Inter-Galactic Medium */
+  igmenum	igm_type;		/* IGM type */
 /* Lensing */
   double	lens_kappa;		  /* Convergence lensing parameter */
   double	lens_gamma[2];		  /* Shear lensing parameters */

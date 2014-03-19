@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		28/05/2013
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -49,6 +49,10 @@
 #define	SED_FLAMBDADATA	0	/* Data are originally f_lambda or passband */
 #define	SED_FNUDATA    	1	/* Data are originally in f_nu units */
 
+/*---------------------------------- enum -----------------------------------*/
+
+typedef enum {DETECT_PHOTONS, DETECT_ENERGY}	detenum;
+
 /*-------------------------- structure definitions --------------------------*/
 
 typedef struct
@@ -65,7 +69,9 @@ typedef struct
 /*-------------------------------- protos -----------------------------------*/
 
 sedstruct	*sed_dup(sedstruct *sed),
-		*sed_load(char *datadir_name, char *sed_name);
+		*sed_extinc(sedstruct *sed, sedstruct *tau, double taufact),
+		*sed_load(char *datadir_name, char *sed_name),
+		*sed_new(char *name, int ndata);
 
 double		sed_calib(sedstruct *sed, sedstruct *pb),
 		sed_kcor(sedstruct *sed, sedstruct *pb, double z),
@@ -76,8 +82,6 @@ double		sed_calib(sedstruct *sed, sedstruct *pb),
 void		pb_calib(sedstruct **pb, sedstruct **pbcalibsed, int npb,
 			sedstruct *refpb, sedstruct *refcalibsed,
 			sedstruct *backsed),
-		sed_end(sedstruct *sed),
-		sed_extinc(sedstruct *sed, sedstruct *tau, double taufact,
-			sedstruct **sedo);
+		sed_end(sedstruct *sed);
 
 #endif

@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2011 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		03/03/2011
+*	Last modified:		06/06/2013
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -71,6 +71,8 @@ pkeystruct key[] =
   {"H0", P_FLOAT, &prefs.h0, 0,0, 1.0, 1000.0},
   {"HUBBLE_TYPE", P_FLOATLIST, prefs.gal_hubtype, 0,0, -6.0, 10.0,
    {""}, 1, GAL_MAXNTYPE, &prefs.ngal_hubtype},
+  {"IGM_TYPE", P_KEY, &prefs.igm_type, 0,0, 0.0,0.0,
+   {"NONE","MADAU_AVERAGE",""}},
   {"IMAGE_HEIGHT", P_INTLIST, prefs.height, 1, 1000000000, 0.0,0.0,
    {""}, 1, SED_MAXNPB, &prefs.nheight},
   {"IMAGE_WIDTH", P_INTLIST, prefs.width, 1, 1000000000, 0.0,0.0,
@@ -152,10 +154,10 @@ char *default_prefs[] =
 " ",
 "PASSBAND_REF    couch/Bj        # Reference passband",
 "CALIBSED_REF    Vega            # SED for ref. passband mag.system (AB or Vega)",
-"REFDETECT_TYPE  ENERGY          # Ref. detector type: \"PHOTONS\" or \"ENERGY\"",
-"PASSBAND_OBS    megaprime/g,megaprime/r,megaprime/i     # Observed passband(s)",
+"REFDETECT_TYPE  ENERGY          # Ref. detector type: PHOTONS or ENERGY",
+"PASSBAND_OBS    megaprime/g,megaprime/r,megaprime/i  # Observation passband(s)",
 "CALIBSED_OBS    AB              # SED(s) for obs. mag.system(s) (AB or Vega)",
-"OBSDETECT_TYPE  PHOTONS         # Obs. detector type: \"PHOTONS\" or \"ENERGY\"",
+"OBSDETECT_TYPE  PHOTONS         # Observation detector type: PHOTONS or ENERGY",
 " ",
 "#------------------------------- Cosmology -----------------------------------",
 " ",
@@ -226,6 +228,10 @@ char *default_prefs[] =
 "*                                # ... rmax(h^-1 Mpc) sig_v(h^-1 km/s) M_real...",
 "*                                # ... Ngal rc('') rmax('') ...",
 "*",
+"#-------------------------- InterGalactic Medium  -----------------------------",
+" ",
+"IGM_TYPE        MADAU_AVERAGE   # MADAU_AVERAGE or NONE",
+" ",
 "*#------------------------------- Lensing -------------------------------------",
 "*LENS_KAPPA      0.0             # weak lensing (constant) convergence parameter",
 "*LENS_GAMMA      0.0,0.0         # weak lensing (constant) shear parameters ",
@@ -245,7 +251,7 @@ char *default_prefs[] =
 " ",
 "DATA_DIRECTORY  " DATA_DIR,
 "                                # Top of directory tree containing Stuff data",
-"VERBOSE_TYPE    NORMAL          # \"QUIET\",\"NORMAL\", \"LOG\" or \"FULL\"",
+"VERBOSE_TYPE    NORMAL          # QUIET, NORMAL, LOG or FULL",
 #ifdef USE_THREADS
 "NTHREADS        0               # Number of simultaneous threads for the SMP",
 "                                # version of " BANNER " (0 = automatic)",

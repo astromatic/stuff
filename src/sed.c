@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		27/05/2013
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -43,9 +43,14 @@
 #include "sed.h"
 
 
-/********************************* sed_dup **********************************/
-/*
-Duplicate a SED or passband.
+/****** sed_dup **************************************************************
+PROTO	sedstruct *sed_dup(sedstruct *sed)
+PURPOSE	Duplicate a SED or passband.
+INPUT	SED structure pointer.
+OUTPUT	Pointer to a copy of the input sed.
+NOTES 	-.
+AUTHOR	E. Bertin (IAP)
+VERSION	27/05/2013
 */
 sedstruct	*sed_dup(sedstruct *sed)
   {
@@ -66,29 +71,35 @@ sedstruct	*sed_dup(sedstruct *sed)
   }
 
 
-/********************************* sed_load **********************************/
-/*
-Load, reformat, and combine SEDs or passbands. Negative lambda indicate that
-the data are stored in f_nu instead of f_lambda units.
+/****** sed_load *************************************************************
+PROTO	sedstruct *sed_load(char *seddir_name, char *sed_name)
+PURPOSE	Load, reformat, and combine SEDs or passbands.
+INPUT	SED structure pointer.
+OUTPUT	Pointer to the loaded sed.
+NOTES	Negative lambda indicate that the data are stored in f_nu instead of
+	f_lambda units.
+AUTHOR	E. Bertin (IAP)
+VERSION	27/05/2013
 */
 sedstruct	*sed_load(char *seddir_name, char *sed_name)
   {
    sedstruct		*sedcomp[SED_MAXNCOMP];
    const char		notokstr[] = {" \t=,;\n\r\""};
-   char			fullname[MAXCHAR];
+   char			fullname[MAXCHAR], shortname[MAXCHAR],
+			*tokptr1, *tokptr2,
+			*cstr, *cstr2;
    sedstruct		*sed, *sed2;
    FILE			*infile;
    double		*wavet, *datat,
 			waveval, dataval;
-   char			*cstr, *cstr2;
    int			j,k,last, dataflag, fnuflag, ncomp, ndatat;
 
-  fnuflag = SED_FLAMBDADATA;
-  cstr = strtok(sed_name, notokstr);
+  cstr = strtok_r(sed_name, notokstr, &tokptr1);
 /* Decompose passband components */
-  for (j=0; (cstr2 = strtok(j?NULL:cstr, "*")); j++)
+  for (j=0; (cstr2 = strtok_r(j?NULL:cstr, "*", &tokptr1)); j++)
     {
 /*--  Include directory path */
+    strcpy(shortname, cstr2);
     if (*cstr2 != '/')
       {
       strcpy(fullname, seddir_name);
@@ -111,11 +122,10 @@ sedstruct	*sed_load(char *seddir_name, char *sed_name)
       }
     dataflag = 0;
     ndatat = SED_NDATA;
-    QMALLOC(sedcomp[j], sedstruct, 1);
-    QCALLOC(sedcomp[j]->wave, double, ndatat);
+    sedcomp[j] = sed_new(strtok_r(shortname, notokstr, &tokptr2), ndatat);
     wavet = sedcomp[j]->wave;
-    QCALLOC(sedcomp[j]->data, double, ndatat);
     datat = sedcomp[j]->data;
+    fnuflag = SED_FLAMBDADATA;
     for (k=1; fgets(gstr, MAXCHAR, infile);)
       {
       if (k>ndatat)
@@ -140,8 +150,7 @@ sedstruct	*sed_load(char *seddir_name, char *sed_name)
           dataflag = 1;
         waveval*=ANGSTROEM;
         if (k>1 && waveval<*(wavet-1))
-          error(EXIT_FAILURE, "*ERROR*: decreasing wavelength in ",
-		cstr2);
+          error(EXIT_FAILURE, "*ERROR*: decreasing wavelength in ", cstr2);
         *(wavet++) = waveval;
         *(datat++) = dataval;
         k++;
@@ -162,6 +171,7 @@ sedstruct	*sed_load(char *seddir_name, char *sed_name)
       warning("Empty SED or pass-band in ", cstr2);
     sedcomp[j]->wavemin = sedcomp[j]->wave[0];
     sedcomp[j]->wavemax = sedcomp[j]->wave[last];
+    sedcomp[j]->fnu_flag = fnuflag;
     }
 
 /* Combine passband components */
@@ -178,16 +188,46 @@ sedstruct	*sed_load(char *seddir_name, char *sed_name)
       sed = sed2;
       }
     }
-  strcpy(sed->name, cstr);
-  sed->fnu_flag = fnuflag;
 
   return sed;
   }
 
 
-/********************************* sed_end ***********************************/
-/*
-Terminate SED or passband processing.
+/****** sed_new **************************************************************
+PROTO	sedstruct *sed_new(char *name, int ndata)
+PURPOSE	Create an empty SED or passband, filled with zeroes;
+INPUT	SED name,
+	number of SED points.
+OUTPUT	Pointer to the new sed.
+NOTES	-.
+AUTHOR	E. Bertin (IAP)
+VERSION	27/05/2013
+*/
+sedstruct	*sed_new(char *name, int ndata)
+  {
+   sedstruct *sed;
+
+  QMALLOC(sed, sedstruct, 1);
+
+  sed->ndata = ndata;
+  QCALLOC(sed->wave, double, ndata);
+  QCALLOC(sed->data, double, ndata);
+  strcpy(sed->name, name);
+  sed->wavemin = sed->wavemax = 0.0;
+  sed->fnu_flag = SED_FLAMBDADATA;
+
+  return sed;
+  }
+
+
+/****** sed_end **************************************************************
+PROTO	void sed_end(sedstruct *sed)
+PURPOSE	Terminate SED or passband.
+INPUT	Pointer to the sed.
+OUTPUT	-.
+NOTES	Memory is freed upon exit.
+AUTHOR	E. Bertin (IAP)
+VERSION	27/05/2013
 */
 void	sed_end(sedstruct *sed)
   {
@@ -199,9 +239,19 @@ void	sed_end(sedstruct *sed)
   }
 
 
-/********************************* sed_mul ***********************************/
-/*
-Multiply and integrate 2 SEDs or passbands without degrading resolution.
+/****** sed_mul **************************************************************
+PROTO	double sed_mul(sedstruct *sed1, double wf1,
+			sedstruct *sed2, double wf2, sedstruct **psedo)
+PURPOSE	Multiply and integrate 2 SEDs or passbands without degrading resolution.
+INPUT	Pointer to SED #1,
+	multiplicative factor for wavelengths of SED #1,
+	pointer to SED #2,
+	multiplicative factor for wavelengths of SED #2,
+	pointer to the SED product.
+OUTPUT	Sum of the SED product.
+NOTES	-.
+AUTHOR	E. Bertin (IAP)
+VERSION	28/05/2013
 */
 double	sed_mul(sedstruct *sed1, double wf1, sedstruct *sed2, double wf2,
 		sedstruct **psedo)
@@ -318,9 +368,10 @@ double	sed_mul(sedstruct *sed1, double wf1, sedstruct *sed2, double wf2,
       {
       free(sedo->wave);
       free(sedo->data);
+      sedo->wave = sedo->data = NULL;
       sedo->wavemin = sedo->wavemax = 1.0;
       }
-    sprintf(sedo->name, "%s*%s",  sed1->name, sed2->name);
+    sprintf(sedo->name, "%s * %s",  sed1->name, sed2->name);
     sedo->fnu_flag = fnu1|fnu2;
     }
 
@@ -328,10 +379,16 @@ double	sed_mul(sedstruct *sed1, double wf1, sedstruct *sed2, double wf2,
   }
 
 
-/********************************* sed_kcor *********************************/
-/*
-Compute k-correction (+band correction) for SED sed through passband pb, in
-linear units.
+/****** sed_kcor *************************************************************
+PROTO	double sed_kcor(sedstruct *sed, sedstruct *pb, double z)
+PURPOSE	Compute k-correction (+band correction) for SED sed through passband pb.
+INPUT	Pointer to the source SED,
+	pointer to the passband "SED",
+	source redshift.
+OUTPUT	k-correction (in linear units).
+NOTES	-.
+AUTHOR	E. Bertin (IAP)
+VERSION	27/05/2013
 */
 double	sed_kcor(sedstruct *sed, sedstruct *pb, double z)
   {
@@ -345,9 +402,15 @@ double	sed_kcor(sedstruct *sed, sedstruct *pb, double z)
   }
 
 
-/********************************* sed_calib *********************************/
-/*
-Calibrate a SED: normalize it through a specific passband.
+/****** sed_calib ************************************************************
+PROTO	double sed_calib(sedstruct *sed, sedstruct *pb)
+PURPOSE	Calibrate an SED: normalize it through a specific passband.
+INPUT	Pointer to the source SED,
+	pointer to the passband "SED".
+OUTPUT	Computed normalization factor.
+NOTES	The input SED is normalized with the computed normalization factor.
+AUTHOR	E. Bertin (IAP)
+VERSION	27/05/2013
 */
 double	sed_calib(sedstruct *sed, sedstruct *pb)
   {
@@ -369,9 +432,21 @@ double	sed_calib(sedstruct *sed, sedstruct *pb)
   }
 
 
-/********************************** pb_calib *********************************/
-/*
-Calibrate passbands: normalize them to a magnitude system.
+/****** pb_calib *************************************************************
+PROTO	void pb_calib(sedstruct **pb, sedstruct **pbcalibsed, int npb, 
+		sedstruct *refpb, sedstruct *refcalibsed,
+		sedstruct *backsed)
+PURPOSE	Calibrate passbands: normalize them to a magnitude system.
+INPUT	Pointer to the array of input passbands,
+	pointer to the array if calibration passbands (e.g., Vega, AB,..),
+	number of passbands,
+	pointer to the reference passband,
+	pointer to the reference calibration passband (e.g., Vega, AB,..),
+	pointer to the background SED.
+OUTPUT	-.
+NOTES	-.
+AUTHOR	E. Bertin (IAP)
+VERSION	27/05/2013
 */
 void	pb_calib(sedstruct **pb, sedstruct **pbcalibsed, int npb, 
 		sedstruct *refpb, sedstruct *refcalibsed,
@@ -382,15 +457,11 @@ void	pb_calib(sedstruct **pb, sedstruct **pbcalibsed, int npb,
    int			i, j;
 
 /* Normalize reference spectrum */
-  QMALLOC(normsed, sedstruct, 1);
-  sprintf(normsed->name, "5556 A normalization");
-  normsed->fnu_flag = 0;
-  normsed->ndata = 3;
-  QCALLOC(normsed->wave, double, normsed->ndata);
-  QCALLOC(normsed->data, double, normsed->ndata);
+  normsed = sed_new("5556 A normalization", 3);
   normsed->wavemin = normsed->wave[0] = 5555.0*ANGSTROEM;
   normsed->wave[1] = 5556*ANGSTROEM;
   normsed->wavemax = normsed->wave[2] = 5557.0*ANGSTROEM;
+
 /* The "line" FWHM is indeed 1 A, and we want the result to be REF_PHOTRATE */
   normsed->data[1] = 1.0/(REF_ENERGY*ANGSTROEM);
   sed_calib(refcalibsed, normsed);
@@ -432,48 +503,55 @@ void	pb_calib(sedstruct **pb, sedstruct **pbcalibsed, int npb,
 /* Compute dot-product of the reference passband and the reference spectrum */
   sed_calib(refpb, refcalibsed);
 
-  NPRINTF(OUTPUT, "------------- Passband name  zero-point"
-"  background (mag.arcsec-2)\n");
+  NPRINTF(OUTPUT, "------------- Passband name                 zero-point"
+		" background (mag.arcsec-2)\n");
 
   for (j=0; j<npb; j++)
     {
     magzp = 2.5*log10(sed_calib(pb[j], pbcalibsed[j])*prefs.area[j]/prefs.gain[j]);
     backinteg = (backsed? sed_mul(backsed, 1.0, pb[j], 1.0, NULL): 1.0);
-    NPRINTF(OUTPUT, "Passband #%2d: %-16.16s  %+6.3f  %+6.3f\n",
-	j+1, prefs.pb_name[j], magzp,-2.5*log10(backinteg/4.254e10));
+    NPRINTF(OUTPUT, strlen(pb[j]->name)>30?
+		  "Passband #%-3d %-27.27s...  %+6.3f  %+6.3f\n"
+		: "Passband #%-3d %-30.30s  %+6.3f  %+6.3f\n",
+		j+1, pb[j]->name, magzp,-2.5*log10(backinteg/4.254e10));
     }
 
   return;
   }
 
 
-/********************************* sed_extinc ********************************/
-/*
-Apply an extinction law to a SED.
+/****** sed_extinc ***********************************************************
+PROTO	sedstruct *sed_extinc(sedstruct *sed, sedstruct *tau, double taufact)
+PURPOSE	Apply an extinction law to an SED.
+INPUT	Pointer to the source SED,
+	pointer to the extinction "SED" (tau),
+	multiplicative factor for extinction "SED".
+OUTPUT	Pointer to the extinguished SED.
+NOTES	-.
+AUTHOR	E. Bertin (IAP)
+VERSION	27/05/2013
 */
-void	sed_extinc(sedstruct *sed, sedstruct *tau, double taufact,
-		sedstruct **sedo)
+sedstruct	*sed_extinc(sedstruct *sed, sedstruct *tau, double taufact)
   {
-   sedstruct	extinc;
+   sedstruct	*extinc, *sedo;
    double	*extdata, *taudata;
    int		i;
 
-  extinc = *tau;
-  QMEMCPY(tau->wave, extinc.wave, double, extinc.ndata);
-  QMALLOC(extinc.data, double, extinc.ndata);
+  extinc = sed_dup(tau);
 
 /* Compute exp(-tau) */
-  extdata = extinc.data;
+  extdata = extinc->data;
   taudata = tau->data;
-  for (i=extinc.ndata; i--;)
+  for (i=extinc->ndata; i--;)
     *(extdata++) = exp(-taufact**(taudata++));
 
 /* Compute the new spectrum */
-  sed_mul(sed, 1.0, &extinc, 1.0, sedo);
+  sed_mul(sed, 1.0, extinc, 1.0, &sedo);
 
-  free(extinc.wave);
-  free(extinc.data);
+  sed_end(extinc);
 
-  return;
+  return sedo;
   }
+
+
 

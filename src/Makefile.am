@@ -7,7 +7,7 @@
 #
 #	This file part of:	Stuff
 #
-#	Copyright:		(C) 2005-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+#	Copyright:		(C) 2005-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
 #
 #	License:		GNU General Public License
 #
@@ -22,7 +22,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		26/10/2010
+#	Last modified:		27/05/2013
 #
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -31,8 +31,9 @@
 #endif
 
 bin_PROGRAMS	= stuff
-stuff_SOURCES	= clusters.c cosmo.c $(CPLOTSOURCE) galaxies.c lf.c main.c \
-		  makeit.c misc.c prefs.c random.c sed.c stars.c \
-		  clusters.h cosmo.h define.h galaxies.h globals.h key.h lf.h \
-		  preflist.h prefs.h random.h sed.h stars.h threads.h types.h
+stuff_SOURCES	= clusters.c cosmo.c $(CPLOTSOURCE) galaxies.c igm.c lf.c \
+		  main.c makeit.c misc.c prefs.c random.c sed.c stars.c \
+		  clusters.h cosmo.h define.h galaxies.h globals.h igm.h key.h \
+		  lf.h preflist.h prefs.h random.h sed.h stars.h threads.h \
+		  types.h
 DATE=`date +"%Y-%m-%d"`
