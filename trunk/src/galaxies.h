@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2011 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2016 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		03/03/2011
+*	Last modified:		01/04/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -78,6 +78,7 @@ typedef struct
   double	dflat;		/* Disk apparent flattening (A/R) */
   double	*bt;		/* Apparent bulge/total in each passband */
   double	mabs;		/* Absolute magnitude in ref. passband */
+  double	refmag;		/* Apparent magnitude in ref. passband */
   double	*mag;		/* Apparent magnitude in each passband */
   } galstruct;
 
@@ -87,13 +88,16 @@ galtypestruct	*galtype_init(double hubtype, double bt, double extinct,
 			lfstruct *lf,
 			sedstruct *bsed, sedstruct *dsed,
 			sedstruct *tau_i, sedstruct *refpb);
-galstruct	*gal_init(galtypestruct *galtype, double z, double mabsmax,
+galstruct	*gal_init(galtypestruct *galtype, double z,
+			double mabsmax, sedstruct *refpb,
 			sedstruct **pb, int npb);
 
 double		gal_bulgeflat(double cosi),
 		gal_bulgesize(galtypestruct *galtype, double mabs),
+		gal_cosi(void),
 		gal_disksize(galtypestruct *galtype, double mabs),
-		gal_cosi(void);
+		gal_mag(galtypestruct *galtype, double mabs, double z,
+			sedstruct *pb, sedstruct *dsed, double *btout);
 
 void		galtype_end(galtypestruct *galtype),
 		gal_end(galstruct *gal),
