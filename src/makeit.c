@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2016 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		27/05/2013
+*	Last modified:		01/04/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -71,7 +71,7 @@ void	makeit(void)
 			extdir_name[MAXCHAR];
    static double	xscale[SED_MAXNPB], xoffset[SED_MAXNPB],
 			yscale[SED_MAXNPB], yoffset[SED_MAXNPB];
-   double		mabsmax, dn, bt, kb,kd,kt,
+   double		mabsmin, mabsmax, dn, bt, kb,kd,kt,
 			width,height, widthmax,heightmax, x,y, xp,yp, domega,
 			z, dz,zlow,zhigh, zmax, dlc, galdens, dtime;
    long			nsource;
@@ -297,12 +297,8 @@ void	makeit(void)
       if (zlow>0.0)
         {
 /*------ Compute a lower limit to the brigthness of detectable galaxies */
-/*------ Linear k-corrections for bulge and disk */
-        kb = bt>0.0? sed_kcor(galtype[g]->bsed, refpb, zlow) : 1.0;
-        kd = bt<1.0? sed_kcor(galtype[g]->dsed, refpb, zlow) : 1.0;
-        if ((kt=bt*(kb-kd)+kd) < 1/BIG)
-          kt = 1/BIG;
-        mabsmax = prefs.maglim[1]-cosmo_dmodul(zlow)+2.5*log10(kt);
+        mabsmax = prefs.maglim[1] - gal_mag(galtype[g], 0.0, zlow, refpb,
+					NULL, NULL);
         if (lf->mabsmax < mabsmax)
           mabsmax = lf->mabsmax;
         }
@@ -323,8 +319,12 @@ void	makeit(void)
         {
 /*------ Redshift */
         z = random_double()*(zhigh-zlow)+zlow;
-        gal = gal_init(galtype[g], z, mabsmax, pbcorr, npb);
-
+        gal = gal_init(galtype[g], z, mabsmax, refpb, pbcorr, npb);
+        if (gal->refmag < prefs.maglim[0] || gal->refmag > prefs.maglim[1])
+          {
+          gal_end(gal);
+          continue;
+          }
 /*------ Add constant shear */
         if (shearflag)
           gal_shear(gal, prefs.lens_kappa, prefs.lens_gamma, npb);
@@ -362,7 +362,12 @@ void	makeit(void)
           cluster_rndgalpos(clusters[c], &x, &y, &z);
           if (z<=0.0)
             continue;
-          gal = gal_init(galtype[g], z, mabsmax, pbcorr, npb);
+          gal = gal_init(galtype[g], z, mabsmax, refpb, pbcorr, npb);
+          if (gal->refmag < prefs.maglim[0] || gal->refmag > prefs.maglim[1])
+            {
+            gal_end(gal);
+            continue;
+            }
           clusters[c]->real_mabs += exp(-0.921034*gal->mabs);
 /*-------- Add constant shear */
           if (shearflag)

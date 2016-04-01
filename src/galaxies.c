@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2016 Emmanuel Bertin -- IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		28/05/2013
+*	Last modified:		01/04/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -192,7 +192,8 @@ double gal_cosi(void)
 "Render" a galaxy at a given cosmological redshift with a given luminosity
 function.
 */
-galstruct *gal_init(galtypestruct *galtype, double z, double mabsmax,
+galstruct *gal_init(galtypestruct *galtype, double z,
+			double mabsmax, sedstruct *refpb,
 			sedstruct **pb, int npb)
   {
    galstruct	*gal;
@@ -226,23 +227,43 @@ galstruct *gal_init(galtypestruct *galtype, double z, double mabsmax,
   gal->bsize = gal_bulgesize(galtype, mabsb-dm)/da*pow(1.0+z, prefs.gal_brevol);
   gal->dsize = gal_disksize(galtype, mabsd-dm)/da*pow(1.0+z, prefs.gal_drevol);
   bt = galtype->bt;
+/* Reference magnitude */
+  gal->refmag = gal_mag(galtype, mabs, z, refpb, dsed, NULL);
 /* Now in each observed passband */
   for (p=0; p<npb; p++)
-    {
-/*-- Linear k-corrections for bulge, disk and total */
-    kb = bt>0.0? sed_kcor(galtype->bsed, pb[p], z) : 1.0;
-    kd = bt<1.0? sed_kcor(dsed, pb[p], z) : 1.0;
-    if ((kt=bt*(kb-kd)+kd) < 1/BIG)
-      kt = 1/BIG;
-/*-- Apparent B/T in this passband */
-    gal->bt[p] = bt*kb/kt;
-/*-- Apparent magnitude */
-    gal->mag[p] = mabs + cosmo_dmodul(z) - 2.5*log10(kt);
-    }
+/*-- Apparent magnitude and B/T in each passband */
+    gal->mag[p] = gal_mag(galtype, mabs, z, pb[p], dsed, &gal->bt[p]);
 
   sed_end(dsed);
 
   return gal;
+  }
+
+
+/********************************* gal_mag **********************************/
+/*
+Compute a galaxy's apparent magnitude at a given cosmological redshift, given
+its absolute magnitude.
+*/
+double gal_mag(galtypestruct *galtype, double mabs, double z,
+		sedstruct *pb,sedstruct *dsed, double *btout)
+  {
+   double	 kb,kd,kt,bt;
+
+  bt = galtype->bt;
+  if (!dsed)
+    dsed = galtype->dsed;
+/* Linear k-corrections for bulge, disk and total */
+  kb = bt>0.0? sed_kcor(galtype->bsed, pb, z) : 1.0;
+  kd = bt<1.0? sed_kcor(dsed, pb, z) : 1.0;
+  if ((kt=bt*(kb-kd)+kd) < 1/BIG)
+    kt = 1/BIG;
+/* Apparent B/T in this passband */
+  if (btout)
+    *btout = bt*kb/kt;
+
+/*-- Apparent magnitude */
+  return mabs + cosmo_dmodul(z) - 2.5*log10(kt);
   }
 
 

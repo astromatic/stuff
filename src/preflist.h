@@ -148,7 +148,7 @@ char *default_prefs[] =
 " ",
 "COLLECT_AREA    1.0             # Effective collecting area(s) (in m2)",
 "GAIN            1.0             # Detector conversion factor(s) (in e-/ADU)",
-"SED_BACKGROUND  zodiacal        # Background SED",
+"SED_BACKGROUND  sky/puxley      # Background SED",
 " ",
 "#-------------------------------- Passbands ----------------------------------",
 " ",
