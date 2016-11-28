@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2016 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		01/04/2016
+*	Last modified:		28/11/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -46,6 +46,7 @@
 #define	GAL_BULGEQSIG	0.18	/* Sigma of bulge flattening distribution */
 
 #define	GAL_MAXINCLIN	85.0	/* Max. allowed galaxy inclination (deg) */
+#define	GAL_INCLIN_STEP	0.01	/* Inclin. step angle for integrations (deg) */
 
 /*--------------------------------- flags -----------------------------------*/
 
@@ -61,7 +62,10 @@ typedef struct
   double	beta;	/* Tully-Fisher exponent in the ref. band */
   double	disk_rstar;	/* Disk scale-length */
   double	disk_sigmalambda;
+  double	disk_extinct;	/* Extinction */
   double	disk_taufact;	/* Extinction factor in the ref. band */
+  double	disk_tau_a;
+  double	disk_tau_b;
   double	bulge_rstar;	/* Bulge effective radius */
   sedstruct	*bsed;	/* Bulge SED */
   sedstruct	*dsed;	/* Disk SED */

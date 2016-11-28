@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		28/05/2013
+*	Last modified:		12/09/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -44,12 +44,14 @@ typedef struct
   {
   char		*(cat_name[SED_MAXNPB]);/* Filename(s) of output catalog */
   int		ncat_name;		/* Number of catalogs */
-  int		width[SED_MAXNPB];	/* Image width */
-  int		nwidth;			/* Number of width entries */
-  int		height[SED_MAXNPB];	/* Image height */
-  int		nheight;	       	/* Number of height entries */
-  double	pixscale[SED_MAXNPB];	/* Pixel scales (arcsec) */
-  int		npixscale;	       	/* Number of pixel size entries */
+  enum {COORD_PIXEL, COORD_EQUATORIAL}	coord_type; /* Type of coordinates */
+  double	coord_center[2];	/* Center coordinates */
+  int		ncoord_center;		/* Number of coordinates */
+  double	field_size[2];		/* Field of view */
+  int		nfield_size;		/* Number of field dimensions */
+  int		width;			/* Image width */
+  int		height;			/* Image height */
+  double	pixscale;		/* Pixel scale (arcsec) */
   double	maglim[2];	/* Magnitude limits of the simulation */
 /* Cosmology */
   double	h0;		/* Hubble constant (km.Mpc-1) */

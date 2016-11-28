@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		27/05/2013
+*	Last modified:		21/11/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -79,7 +79,7 @@ OUTPUT	Pointer to the loaded sed.
 NOTES	Negative lambda indicate that the data are stored in f_nu instead of
 	f_lambda units.
 AUTHOR	E. Bertin (IAP)
-VERSION	27/05/2013
+VERSION	25/09/2016
 */
 sedstruct	*sed_load(char *seddir_name, char *sed_name)
   {
@@ -136,9 +136,9 @@ sedstruct	*sed_load(char *seddir_name, char *sed_name)
         QREALLOC(sedcomp[j]->data, double, ndatat);
         datat = sedcomp[j]->data+k-1;
         }
-      if ((*gstr!=0) && (*gstr!=(char)'#'))
+      if ((*gstr!=0) && (*gstr!=(char)'#')
+	&& sscanf(gstr, "%lf %lf", &waveval, &dataval) == 2)
         {
-        sscanf(gstr, "%lf %lf", &waveval, &dataval);
         if (waveval < 0.0)
           {
           waveval = -waveval;
@@ -521,20 +521,24 @@ void	pb_calib(sedstruct **pb, sedstruct **pbcalibsed, int npb,
 
 
 /****** sed_extinc ***********************************************************
-PROTO	sedstruct *sed_extinc(sedstruct *sed, sedstruct *tau, double taufact)
+PROTO	double sed_extinc(sedstruct *sed, sedstruct *tau, double taufact
+				sedstruct **psedo)
 PURPOSE	Apply an extinction law to an SED.
 INPUT	Pointer to the source SED,
 	pointer to the extinction "SED" (tau),
 	multiplicative factor for extinction "SED".
-OUTPUT	Pointer to the extinguished SED.
+	pointer to the extinguished SED.
+OUTPUT	Sum of the extincted SED.
 NOTES	-.
 AUTHOR	E. Bertin (IAP)
-VERSION	27/05/2013
+VERSION	21/11/2016
 */
-sedstruct	*sed_extinc(sedstruct *sed, sedstruct *tau, double taufact)
+double	sed_extinc(sedstruct *sed, sedstruct *tau, double taufact,
+				sedstruct **psedo)
   {
-   sedstruct	*extinc, *sedo;
-   double	*extdata, *taudata;
+   sedstruct	*extinc;
+   double	*extdata, *taudata,
+		prod;
    int		i;
 
   extinc = sed_dup(tau);
@@ -546,11 +550,11 @@ sedstruct	*sed_extinc(sedstruct *sed, sedstruct *tau, double taufact)
     *(extdata++) = exp(-taufact**(taudata++));
 
 /* Compute the new spectrum */
-  sed_mul(sed, 1.0, extinc, 1.0, &sedo);
+  prod = sed_mul(sed, 1.0, extinc, 1.0, psedo);
 
   sed_end(extinc);
 
-  return sedo;
+  return prod;
   }
 
 

@@ -26,12 +26,12 @@
 #
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+ACLOCAL_AMFLAGS		= -I m4
 AUTOMAKE_OPTIONS	= foreign no-dependencies
-SUBDIRS			= man src
-EXTRA_DIST		= data doc \
+SUBDIRS			= src man
+EXTRA_DIST		= data doc autogen.sh \
 			  AUTHORS BUGS ChangeLog COPYRIGHT \
-			  HISTORY INSTALL LICENSE README THANKS \
-			  acx_pthread.m4 acx_prog_cc_optim.m4
+			  HISTORY INSTALL LICENSE README THANKS
 RPM_ROOTDIR		= `rpmbuild --nobuild -E %_topdir`
 RPM_SRCDIR		= $(RPM_ROOTDIR)/SOURCES
 dist-hook:

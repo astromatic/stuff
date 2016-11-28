@@ -533,15 +533,14 @@ void	useprefs(void)
 
 /* Fill-in image and pixel sizes */
   n =prefs.npb_name;  
-  if (prefs.nwidth < n)
-    for (j=(i=prefs.nwidth)-1; i<n; i++)
-      prefs.width[i] = prefs.width[j];
-  if (prefs.nheight < n)
-    for (j=(i=prefs.nheight)-1; i<n; i++)
-      prefs.height[i] = prefs.height[j];
-  if (prefs.npixscale < n)
-    for (j=(i=prefs.npixscale)-1; i<n; i++)
-      prefs.pixscale[i] = prefs.pixscale[j];
+  if (prefs.coord_type != COORD_PIXEL) {
+    if (prefs.nfield_size == 2 || prefs.field_size[0] > 90.0)
+      error(EXIT_FAILURE, "*Error*: radius in degrees expected for FIELD_SIZE ",
+	"when COORD_TYPE != PIXEL");
+  } else
+    for (j=(i=prefs.nfield_size)-1; i<n; i++)
+      prefs.field_size[i] = prefs.field_size[j];
+
   if (prefs.narea < n)
     for (j=(i=prefs.narea)-1; i<n; i++)
       prefs.area[i] = prefs.area[j];

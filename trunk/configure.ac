@@ -7,7 +7,7 @@
 #
 #	This file part of:	Stuff
 #
-#	Copyright:		(C) 2005-2016 Emmanuel Bertin -- IAP/CNRS/UPMC
+#	Copyright:		(C) 2005-2016 IAP/CNRS/UPMC
 #
 #	Stuff is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Stuff.  If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		01/04/2016
+#	Last modified:		07/10/2016
 #
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -29,7 +29,9 @@ define([AC_CACHE_LOAD],)
 define([AC_CACHE_SAVE],)
 
 # This is your standard Bertin source code...
-AC_INIT(stuff, 1.27.0, [bertin@iap.fr])
+AC_INIT(Stuff, 2.0.0a1, [https://github.com/astromatic/stuff],
+	stuff, [http://astromatic.net/software/stuff])
+AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR(src/makeit.c)
 AC_CONFIG_AUX_DIR(autoconf)
 AC_CONFIG_HEADERS(config.h)
@@ -54,8 +56,7 @@ AC_MSG_RESULT([******** Configuring:  $PACKAGE_NAME $VERSION ($date) ********])
 AC_MSG_CHECKING([if compilation flags should be set automatically])
 AC_ARG_ENABLE(auto-flags,
 	[AS_HELP_STRING([--enable-auto-flags],
-	[Let the configure script choose the compilation flags \
-(off by default)])],
+	[Let the configure script choose the compilation flags (default = no)])],
 	AC_MSG_RESULT([yes]),
 	AC_MSG_RESULT([no]))
 
@@ -63,8 +64,7 @@ AC_ARG_ENABLE(auto-flags,
 AC_MSG_CHECKING([whether we should use the INTEL compiler])
 AC_ARG_ENABLE(icc,
 	[AS_HELP_STRING([--enable-icc],
-	[Enable special mode for compilation with the Intel compiler \
-(off by default)])],
+	[Use the Intel compiler (default = no)])],
         CC="icc"
 	AC_MSG_RESULT([yes]),
 	AC_MSG_RESULT([no]))
@@ -135,7 +135,7 @@ AC_ARG_ENABLE(threads,
 AC_MSG_CHECKING([for profiler mode])
 AC_ARG_ENABLE(profiling,
 	[AS_HELP_STRING([--enable-profiling],
-	[Enable special mode for profiling (off by default)])],
+	[Enable special mode for profiling (default = no)])],
 	AC_MSG_RESULT([yes]),
 	AC_MSG_RESULT([no]))
 
@@ -144,7 +144,7 @@ AC_MSG_CHECKING([best linking option])
 AC_ARG_ENABLE(best-link,
 	[AS_HELP_STRING([--enable-best-link],
 	[Choose the right combination of static and dynamic linking to make \
-the executable as portable as possible (off by default)])],
+the executable as portable as possible (default = no)])],
 	AC_MSG_RESULT([yes]),
 	AC_MSG_RESULT([no]))
 
@@ -175,7 +175,7 @@ fi
 # "Best" linking option
 if test "$enable_best_link" = "yes"; then
   if test "$enable_icc" = "yes"; then
-    AM_LDFLAGS="-static-intel -openmp-link static -shared-libgcc \
+    AM_LDFLAGS="-static-intel -qopenmp-link static -shared-libgcc \
 	-static-libtool-libs -no-intel-extensions -avoid-version $AM_LDFLAGS"
   else
     AM_LDFLAGS="-shared-libgcc -static-libtool-libs -avoid-version $AM_LDFLAGS"
