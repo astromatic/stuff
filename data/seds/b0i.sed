@@ -4,8 +4,7 @@
 # extended by Arnouts (1999) to 1145 AA and 25005 AA with fluxes = 0 
 #
 #   lambda(A)  Fluxes
-
-  1145.0  0.000000 
+   1145.0  0.000000 
    1150.0  83.991211 
    1155.0  58.341976 
    1160.0  43.706703 
