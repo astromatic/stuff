@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2013 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		06/06/2013
+*	Last modified:		12/09/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -55,6 +55,10 @@ pkeystruct key[] =
   {"CLUSTER_LISTOUT", P_STRING, prefs.clusterlistout_name},
   {"COLLECT_AREA", P_FLOATLIST, prefs.area, 0,0, 0.0, BIG,
    {""}, 1, SED_MAXNPB, &prefs.narea},
+  {"COORD_TYPE", P_KEY, &prefs.coord_type, 0,0, 0.0,0.0,
+   {"PIXEL","EQUATORIAL",""}},
+  {"COORD_CENTER", P_FLOATLIST, prefs.coord_center, 0,0, -360.0,360.0,
+   {""}, 2, 2, &idummy},
   {"DATA_DIRECTORY", P_STRING, prefs.datadir_name},
   {"DISK_BETA", P_FLOAT, &prefs.gal_dbeta, 0,0, -100,-0.001},
   {"DISK_EXTINCT", P_FLOATLIST, prefs.gal_iextinc, 0,0, 0.0, BIG,
@@ -66,17 +70,13 @@ pkeystruct key[] =
   {"EXTINCT_NAME", P_STRING, prefs.extinct_name},
   {"GAIN", P_FLOATLIST, prefs.gain,  0,0, 0.0, BIG,
    {""}, 1, SED_MAXNPB, &prefs.ngain},
-  {"GALACTIC_COORDS", P_FLOAT, prefs.galcoord, 0,0, 0.0, 360.0,
-   {""}, 2,2, &idummy},
   {"H0", P_FLOAT, &prefs.h0, 0,0, 1.0, 1000.0},
   {"HUBBLE_TYPE", P_FLOATLIST, prefs.gal_hubtype, 0,0, -6.0, 10.0,
    {""}, 1, GAL_MAXNTYPE, &prefs.ngal_hubtype},
   {"IGM_TYPE", P_KEY, &prefs.igm_type, 0,0, 0.0,0.0,
    {"NONE","MADAU_AVERAGE",""}},
-  {"IMAGE_HEIGHT", P_INTLIST, prefs.height, 1, 1000000000, 0.0,0.0,
-   {""}, 1, SED_MAXNPB, &prefs.nheight},
-  {"IMAGE_WIDTH", P_INTLIST, prefs.width, 1, 1000000000, 0.0,0.0,
-   {""}, 1, SED_MAXNPB, &prefs.nwidth},
+  {"FIELD_SIZE", P_FLOATLIST, prefs.field_size, 0,0, 0.0,100000.0,
+   {""}, 1, 2, &prefs.nfield_size},
   {"INCLUDE_STARS", P_BOOL, &prefs.starflag},
   {"LENS_KAPPA", P_FLOAT, &prefs.lens_kappa, 0,0, -1.0, 1.0},
   {"LENS_GAMMA", P_FLOATLIST, prefs.lens_gamma, 0,0, -1.0, 1.0,
@@ -103,8 +103,7 @@ pkeystruct key[] =
   {"PASSBAND_OBS", P_STRINGLIST, prefs.pb_name, 0,0, 0.0,0.0,
    {""}, 1, SED_MAXNPB, &prefs.npb_name},
   {"PASSBAND_REF", P_STRING, prefs.refpb_name},
-  {"PIXEL_SIZE", P_FLOATLIST, prefs.pixscale, 0,0, 1e-3,1e3,
-   {""}, 1, SED_MAXNPB, &prefs.npixscale},
+  {"PIXEL_SIZE", P_FLOAT, &prefs.pixscale, 0,0, 1e-3,1e3},
   {"REFDETECT_TYPE", P_KEY, &prefs.refdetect_type, 0,0, 0.0,0.0,
    {"PHOTONS", "ENERGY", ""}},
   {"SED_BACKGROUND", P_STRING, prefs.backsed_name},
@@ -136,11 +135,12 @@ char *default_prefs[] =
 "# EB " DATE,
 "#",
 " ",
-"#--------------------------------- Image -------------------------------------",
+"#------------------------------- Catalogs -----------------------------------",
 " ",
 "CATALOG_NAME    g.list,r.list,i.list   # output catalog file name(s)",
-"IMAGE_WIDTH     2048            # width of the simulated frame",
-"IMAGE_HEIGHT    2048            # height of the simulated frame",
+"COORD_TYPE      PIXEL           # PIXEL or EQUATORIAL",
+"COORD_CENTER    0.0,0.0         # Center in deg. for if COORD_TYPE != PIXEL",
+"FIELD_SIZE      2048,2048       # FOV (diameter in deg. or width,height in pix.)",
 "PIXEL_SIZE      0.2             # pixel size (arcsec)",
 "MAG_LIMITS      16.0,28.0       # allowed range of apparent magnitudes",
 " ",
@@ -239,7 +239,6 @@ char *default_prefs[] =
 "#------------------------------ Stellar field --------------------------------",
 " ",
 "INCLUDE_STARS   N               # allow addition of a stellar field?",
-"GALACTIC_COORDS 270,30.0        # galactic coordinates",
 "*SED_STARS       Vega            # stellar SEDs",
 " ",
 "#----------------------------- Random Seeds ----------------------------------",

@@ -42,6 +42,7 @@ typedef struct
   double	phistar;	/* Schechter's phi* parameter (m-3) */
   double	mstar;		/* Schechter's M* parameter (mag) */
   double	dmstar;		/* Change in M* due to z or other factor */
+  double	dmstar_faceon;	/* Change in M* due to extinction */
   double	alpha;		/* Schechter's alpha parameter */
   double	mabsmin,mabsmax;/* Bounds of the LF */
   double	mstarevol;	/* M* evolution factor dm* / ln(1+z) */

@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2016 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		01/04/2016
+*	Last modified:		23/11/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -55,8 +55,8 @@ galtypestruct	*galtype_init(double hubtype, double bt, double extinct,
 			sedstruct *tau_i, sedstruct *refpb)
   {
    galtypestruct	*galtype;
-   sedstruct		*dised;
-   double		sum1,sum2;
+   sedstruct		*dised, *dised2;
+   double		dm, sum, sum2, refsum, inc;
 
 /* Allocate memory for the galaxy type structure */
   QCALLOC(galtype, galtypestruct, 1);
@@ -64,17 +64,27 @@ galtypestruct	*galtype_init(double hubtype, double bt, double extinct,
 /* Copy properties */
   galtype->hubtype = hubtype;
   galtype->bt = bt;
+  galtype->disk_extinct = extinct;
+
 /*-- Pre-compute magnitude-offsets for bulge and disk */
   galtype->bdm = bt>0.0? -2.5*log10(bt) : 100.0;
   galtype->ddm = bt<1.0? -2.5*log10(1.0-bt) : 100.0;
+
 /*-- Initialize the luminosity function */
   QMALLOC(galtype->lf, lfstruct, 1);
   *(galtype->lf) = *lf;
-/* Correct M* for disk internal extinction */
-  galtype->lf->mstar -= 2.5*log10(1.0+(1.0-bt)
-			*DEXP(0.12041*extinct));
+
+/* Compute M* correction for disk internal extinct. (no longer done this way)*/
+  sum = dm = 0.0;
+  for (inc=0.0; inc<GAL_MAXINCLIN; inc+=GAL_INCLIN_STEP) {
+    dm += -2.5*log10(bt + (1.0 - bt) * pow(cos(inc*DEG), 0.4 * extinct));
+    sum += 1.0;
+  }
+  galtype->lf->dmstar_faceon = dm / sum;
+
 /* Subtract from M* the average disk extinction to get the face-on value */
   galtype->beta = prefs.gal_dbeta;
+
 /* The 1.67835 is here to convert the effective radius to a scale length */
   galtype->disk_rstar = prefs.gal_drstar*KPC/H/1.67835;
   galtype->disk_sigmalambda = prefs.gal_dsigmalambda;
@@ -82,12 +92,23 @@ galtypestruct	*galtype_init(double hubtype, double bt, double extinct,
   galtype->bsed = sed_dup(bsed);
   galtype->dsed = sed_dup(dsed);
   galtype->tau_i = sed_dup(tau_i);
+
 /* Normalization of extinction */
-  sum1 = sed_mul(dsed, 1.0, refpb, 1.0, &dised);
-  sum2 = sed_mul(dised, 1.0, tau_i, 1.0, NULL);
+  refsum = sed_mul(dsed, 1.0, refpb, 1.0, &dised);
+  sum = sed_mul(dised, 1.0, tau_i, 1.0, &dised2);
+  sum2 = sed_mul(dised2, 1.0, tau_i, 1.0, NULL);
   sed_end(dised);
-  galtype->disk_taufact = sum2>0.0? -0.4*extinct*sum1/sum2
-				    : 0.0;
+  sed_end(dised2);
+  if (refsum > 0.0) {
+//-- Quadratic term from the combination of Taylor expansions of exp() and ln()
+    galtype->disk_tau_a = (sum * sum - sum2) / (2.0 * 1.086 * refsum);
+//-- Linear term from the Taylor expansion of exp()
+    galtype->disk_tau_b = sum / refsum;
+  } else {
+    galtype->disk_tau_a = 0.0;
+    galtype->disk_tau_b = 1.0;
+  }
+
   return galtype;
   }
 
@@ -197,9 +218,9 @@ galstruct *gal_init(galtypestruct *galtype, double z,
 			sedstruct **pb, int npb)
   {
    galstruct	*gal;
-   sedstruct	*dsed;
+   sedstruct	*dsed, *dsedtemp;
    lfstruct	lfevol;
-   double	mabs,mabsb,mabsd, da, kb,kd,kt, bt, dm;
+   double	mabs,mabsb,mabsd, da, kb,kd,kt, bt, dm, tau_c, delta;
    int		p;
 
   QCALLOC(gal, galstruct, 1);
@@ -210,25 +231,38 @@ galstruct *gal_init(galtypestruct *galtype, double z,
   lf_evol(galtype->lf, z, &lfevol);
 
 /* Absolute magnitude in the reference band */
-  gal->mabs = mabs = lf_rndschechter(&lfevol, lfevol.mabsmin, mabsmax);
+  gal->mabs = lf_rndschechter(&lfevol, lfevol.mabsmin, mabsmax);
+
+// Compensate for average dimming due to disk extinction.
+  mabs = gal->mabs - galtype->lf->dmstar_faceon;
   mabsb = mabs + galtype->bdm;	  /* Bulge */
   mabsd = mabs + galtype->ddm;	  /* Disk */
+
 /* Shape */
   gal->bposang = gal->dposang = 360.0*random_double() - 180.0;
   gal->dflat = gal_cosi();
   gal->bflat = gal_bulgeflat(gal->dflat);
+
 /* Disk SED (absorption) */
-  dsed = sed_extinc(galtype->dsed, galtype->tau_i,
-		galtype->disk_taufact*log(gal->dflat));
+  tau_c = galtype->disk_extinct * log10(gal->dflat);
+  delta = galtype->disk_tau_b * galtype->disk_tau_b
+		- 4.0 * galtype->disk_tau_a * tau_c;
+// Muller's method
+  sed_extinc(galtype->dsed, galtype->tau_i, -2.0 * tau_c / (galtype->disk_tau_b
+		+ sqrt(delta > 0.0 ? delta : 0.0)) / 1.086, &dsed);
+
 /* Angular distance element (in m/arcsec)*/
   da = cosmo_dlum(z)*ARCSEC/((1.0+z)*(1.0+z));
+
 /* Compensate for increase of surface brightness due to luminosity evolution */
   dm = lfevol.dmstar;
   gal->bsize = gal_bulgesize(galtype, mabsb-dm)/da*pow(1.0+z, prefs.gal_brevol);
   gal->dsize = gal_disksize(galtype, mabsd-dm)/da*pow(1.0+z, prefs.gal_drevol);
   bt = galtype->bt;
+
 /* Reference magnitude */
   gal->refmag = gal_mag(galtype, mabs, z, refpb, dsed, NULL);
+
 /* Now in each observed passband */
   for (p=0; p<npb; p++)
 /*-- Apparent magnitude and B/T in each passband */

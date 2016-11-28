@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2016 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		01/04/2016
+*	Last modified:		23/11/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -44,6 +44,7 @@
 #include "define.h"
 #include "globals.h"
 #include "prefs.h"
+#include "celsys.h"
 #include "clusters.h"
 #include "cosmo.h"
 #include "galaxies.h"
@@ -55,6 +56,7 @@
 /********************************** makeit ***********************************/
 void	makeit(void)
   {
+   celsysstruct		*celsys;
    clusterstruct	**clusters;
    galtypestruct	**galtype;
    galstruct		*gal;
@@ -62,21 +64,20 @@ void	makeit(void)
 			*pbcalibsed[SED_MAXNPB],
 			*galsed[GAL_MAXNSED], *starsed[STAR_MAXNSED],
 			*refcalibsed, *refpb, *tau_i, *tau_igm,
-			*bsed,*dsed, *backsed;
+			*bsed,*dsed, *backsed, *sed;
    lfstruct		*lf, *lfevol;
    time_t		thetime, thetime2;
    struct tm		*tm;
    FILE			*(catfile[SED_MAXNPB]);
    static char		seddir_name[MAXCHAR], filterdir_name[MAXCHAR],
 			extdir_name[MAXCHAR];
-   static double	xscale[SED_MAXNPB], xoffset[SED_MAXNPB],
-			yscale[SED_MAXNPB], yoffset[SED_MAXNPB];
-   double		mabsmin, mabsmax, dn, bt, kb,kd,kt,
-			width,height, widthmax,heightmax, x,y, xp,yp, domega,
+   double		pos[2], mabsmin, mabsmax, dn, bt, kb,kd,kt,
+			width,height, xscale,yscale, xoffset,yoffset,
+			x,y, radius, omcradius, domega, mag, fluxratio,
 			z, dz,zlow,zhigh, zmax, dlc, galdens, dtime;
    long			nsource;
-   int			c,i,g,n,p, npb, ngaltype, ngalsed, nstarsed, ncluster,
-			clustindex, shearflag;
+   int			c,i,g,n,p,s, npb, ngaltype, ngalsed, nstarsed, ncluster,
+			clustindex, shearflag, angcoordflag;
 
 /* Processing start date and time */
   thetime = time(NULL);
@@ -112,26 +113,24 @@ void	makeit(void)
   shearflag = fabs(prefs.lens_gamma[0])>1e-6 || fabs(prefs.lens_gamma[1])>1e-6
 		|| fabs(prefs.lens_kappa)>1e-6 ;
 
-/* First find the largest spread in x and y */
-  widthmax = heightmax = -BIG;
-  for (p=0; p<npb; p++)
-    {
-    if ((width = prefs.pixscale[p]*prefs.width[p])>widthmax)
-      widthmax = width;
-    if ((height = prefs.pixscale[p]*prefs.height[p])>heightmax)
-      heightmax = height;
-    }
-  widthmax *= 1.1;
-  heightmax *= 1.1;
-/* Position offsets and scales for each passband */
-  for (p=0; p<npb; p++)
-    {
-    xscale[p] = widthmax/prefs.pixscale[p];
-    yscale[p] = heightmax/prefs.pixscale[p];
-    xoffset[p] = (xscale[p]-prefs.width[p])/2.0;
-    yoffset[p] = (yscale[p]-prefs.height[p])/2.0;
-    }
-  domega = widthmax*heightmax*ARCSEC*ARCSEC;
+/* Coordinates */
+  angcoordflag = (prefs.coord_type != COORD_PIXEL);
+  if (angcoordflag) {
+/*-- Initialize celestial coordinates */
+    celsys = celsys_init(prefs.coord_center);
+    radius = prefs.field_size[0] / 2.0 * DEG;
+    omcradius = 1.0 - cos(radius);
+    domega = 2.0 * PI * omcradius;
+  } else {
+/*-- Cartesian position offsets and scales */
+    width = prefs.pixscale * prefs.field_size[0] * 1.1;
+    height = prefs.pixscale * prefs.field_size[1] * 1.1;
+    xscale = width / prefs.pixscale;
+    yscale = height / prefs.pixscale;
+    xoffset = (xscale - prefs.field_size[0]) / 2.0;
+    yoffset = (yscale - prefs.field_size[1]) / 2.0;
+    domega = width * height * ARCSEC * ARCSEC;
+  }
 
 /* Set default directories */
   sprintf(seddir_name, "%s/seds/", prefs.datadir_name);
@@ -176,19 +175,24 @@ void	makeit(void)
   for (p=0; p<npb; p++)
     sed_end(pbcalibsed[p]);
 
-/* Get the galaxy SEDs */
-  NFPRINTF(OUTPUT, "Loading galaxy SEDs...")
-  ngalsed = prefs.ngal_sedname;
-  for (p=0; p<ngalsed; p++)
-    galsed[p] = sed_load(seddir_name, prefs.gal_sedname[p]);
-
 /* Get the star SEDs */
   NFPRINTF(OUTPUT, "Loading star SEDs...")
   nstarsed = prefs.nstar_sedname;
   for (p=0; p<nstarsed; p++)
     starsed[p] = sed_load(seddir_name, prefs.star_sedname[p]);
 
-/* Calibrate the SEDs */
+/* Calibrate the star SEDs */
+  NFPRINTF(OUTPUT, "Calibrating star SEDs...")
+  for (i=0; i<nstarsed; i++)
+    sed_calib(starsed[i], refpb);
+
+/* Get the galaxy SEDs */
+  NFPRINTF(OUTPUT, "Loading galaxy SEDs...")
+  ngalsed = prefs.ngal_sedname;
+  for (p=0; p<ngalsed; p++)
+    galsed[p] = sed_load(seddir_name, prefs.gal_sedname[p]);
+
+/* Calibrate the galaxy SEDs */
   NFPRINTF(OUTPUT, "Calibrating galaxy SEDs...")
   for (i=0; i<ngalsed; i++)
     sed_calib(galsed[i], refpb);
@@ -278,7 +282,7 @@ void	makeit(void)
       {
       tau_igm = sed_igmmadauextinct(zlow);
       for (p=0; p<npb; p++)
-        pbcorr[p] = sed_extinc(pb[p], tau_igm, 1.0);
+        sed_extinc(pb[p], tau_igm, 1.0, &pbcorr[p]);
       sed_end(tau_igm);
       }
     else
@@ -329,19 +333,30 @@ void	makeit(void)
         if (shearflag)
           gal_shear(gal, prefs.lens_kappa, prefs.lens_gamma, npb);
 
-/*------ Position */
+/*------ Randomize coordinates */
         x = random_double();
         y = random_double();
+        if (angcoordflag) {
+/*-------- Position in celestial (angular) coordinates */
+          pos[0] = x * 360.0;
+          pos[1] = asin(1.0 - y * omcradius) / DEG;
+/*-------- Convert to equatorial */
+          celsys_to_eq(celsys, pos);
+        } else {
+/*-------- Position in Cartesian (pixel) coordinates */
+          pos[0] = x * xscale - xoffset;
+          pos[1] = y * yscale - yoffset;
+        }
 /*------ Now in each observed passband */
         for (p=0; p<npb; p++)
           {
-/*-------- Position in pixel coordinates*/
-          xp = x*xscale[p]-xoffset[p];
-          yp = y*yscale[p]-yoffset[p];
           fprintf(catfile[p],
-		"200 %11.4f %11.4f %8.4f %5.3f "
-		"%9.3f %5.3f %+7.2f %9.3f %5.3f %+7.2f %8.5f %+5.1f\n",
-		xp,yp,
+		angcoordflag ? "200 %11.7f %+11.7f %8.4f %5.3f "
+			"%9.3f %5.3f %+7.2f %9.3f %5.3f %+7.2f %8.5f %+5.1f\n"
+			  : "200 %11.4f %11.4f %8.4f %5.3f "
+			"%9.3f %5.3f %+7.2f %9.3f %5.3f %+7.2f %8.5f %+5.1f\n",
+
+		pos[0], pos[1],
 		gal->mag[p], gal->bt[p],
 		gal->bsize, gal->bflat, gal->bposang,
 		gal->dsize, gal->dflat, gal->dposang,
@@ -373,16 +388,16 @@ void	makeit(void)
           if (shearflag)
             gal_shear(gal, prefs.lens_kappa, prefs.lens_gamma, npb);
 
+/*-------- Position in pixel coordinates*/
+          pos[0] = clusters[c]->x + x / prefs.pixscale;
+          pos[1] = clusters[c]->y + y / prefs.pixscale;
 /*-------- Now in each observed passband */
           for (p=0; p<npb; p++)
             {
-/*-------- Position in pixel coordinates*/
-            xp = clusters[c]->x + x/prefs.pixscale[p];
-            yp = clusters[c]->y + y/prefs.pixscale[p];
             fprintf(catfile[p],
 		"200 %11.4f %11.4f %8.4f %5.3f "
 		"%9.3f %5.3f %+7.2f %9.3f %5.3f %+7.2f %8.5f %+5.1f\n",
-		xp,yp,
+		pos[0], pos[1],
 		gal->mag[p], gal->bt[p],
 		gal->bsize, gal->bflat, gal->bposang,
 		gal->dsize, gal->dflat, gal->dposang, z, galtype[g]->hubtype);
@@ -404,6 +419,54 @@ void	makeit(void)
   NFPRINTF(OUTPUT,"");
   NPRINTF(OUTPUT, "%ld galax%s generated\n", nsource, nsource>1?"ies":"y");
 
+/* Generate field stars */
+  if ((prefs.starflag)) {
+//-- Initialize the random generator
+    NFPRINTF(OUTPUT, "Initializing star random generator...")
+    init_random(prefs.starseed);
+
+    dn = domega*10000000000.0;
+    n = (int)random_poisson(dn);
+    nsource += n;
+    sprintf(gstr, "Adding %d stars...", n);
+    NFPRINTF(OUTPUT, gstr);
+
+    for (i=n; i--;) {
+//---- Randomize coordinates */
+      x = random_double();
+      y = random_double();
+      if (angcoordflag) {
+//------ Position in celestial (angular) coordinates */
+        pos[0] = x * 360.0;
+        pos[1] = asin(1.0 - y * omcradius) / DEG;
+//------ Convert to equatorial */
+        celsys_to_eq(celsys, pos);
+      } else {
+//------ Position in Cartesian (pixel) coordinates */
+        pos[0] = x * xscale - xoffset;
+        pos[1] = y * yscale - yoffset;
+      }
+      mag = prefs.maglim[1] + log10(random_double()+1e-8) / 0.4;
+
+//---- Randomize the stellar SED */
+      while ((s=(int)(random_double()*nstarsed)) >= nstarsed);
+      sed = starsed[s];
+
+//---- Now in each observed passband */
+      for (p=0; p<npb; p++) {
+        fluxratio = sed_mul(sed, 1.0, pb[p], 1.0, NULL);
+        fprintf(catfile[p],
+		angcoordflag ? "100 %11.7f %+11.7f %8.4f\n"
+			  : "100 %11.4f %11.4f %8.4f\n",
+		pos[0], pos[1],
+		mag + (fluxratio > 1.0/BIG? -2.5 * log10(fluxratio) : 99.0));
+      }
+    }
+
+    NFPRINTF(OUTPUT,"");
+    NPRINTF(OUTPUT, "%ld star%s generated\n", n, n>1?"s":"");
+  }
+
 /* Close catalogs */
   NFPRINTF(OUTPUT, "Closing catalogs...")
   for (p=0; p<npb; p++)
@@ -416,6 +479,8 @@ void	makeit(void)
 
 /* Free memory */
   NFPRINTF(OUTPUT, "Freeing memory...")
+  if (celsys)
+    celsys_end(celsys);
   for (c=0; c<ncluster; c++)
     free(clusters[c]);
   if (ncluster)

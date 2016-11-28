@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		21/11/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -69,7 +69,7 @@ double	cosmo_dconf(double z0)
     }
 
 /* Now make the interpolation */
-  if (z0>=Z_MIN)
+  if (z0> 0 && z0>=Z_MIN)
     {
     di = (log(z0/Z_MIN)/dlz-0.5);
     i = (int)(di+0.5);
@@ -164,8 +164,10 @@ Compute the distance modulus at a given z (excluding k- and e-corrections).
 */
 double	cosmo_dmodul(double z)
   {
-/* The first term is -2.5*log10(10.0/4*PI) (removed) */
-  return /* 0.24802466 + */ 5*log10(cosmo_dlum(z)/(10*PC));
+   double dlum;
+
+  dlum = cosmo_dlum(z);
+  return dlum > 0.0? 5.0*log10(dlum/(10*PC)) : 0.0;
   }
 
 

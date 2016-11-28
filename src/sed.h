@@ -69,11 +69,12 @@ typedef struct
 /*-------------------------------- protos -----------------------------------*/
 
 sedstruct	*sed_dup(sedstruct *sed),
-		*sed_extinc(sedstruct *sed, sedstruct *tau, double taufact),
 		*sed_load(char *datadir_name, char *sed_name),
 		*sed_new(char *name, int ndata);
 
 double		sed_calib(sedstruct *sed, sedstruct *pb),
+		sed_extinc(sedstruct *sed, sedstruct *tau, double taufact,
+			sedstruct **sedo),
 		sed_kcor(sedstruct *sed, sedstruct *pb, double z),
 		sed_mul(sedstruct *sed1, double wavefact1,
 			sedstruct *sed2, double wavefact2,
