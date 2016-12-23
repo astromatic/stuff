@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		28/11/2016
+*	Last modified:		22/12/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -62,10 +62,11 @@ typedef struct
   double	beta;	/* Tully-Fisher exponent in the ref. band */
   double	disk_rstar;	/* Disk scale-length */
   double	disk_sigmalambda;
-  double	disk_extinct;	/* Extinction */
-  double	disk_taufact;	/* Extinction factor in the ref. band */
-  double	disk_tau_a;
-  double	disk_tau_b;
+  double	extinct;	/* Internal extinction */
+  double	bulge_tau_a;	/* Bulge internal extinction component A */
+  double	bulge_tau_b;	/* Bulge internal extinction component B */
+  double	disk_tau_a;	/* Disk internal extinction component A */
+  double	disk_tau_b;	/* Disk internal extinction component B */
   double	bulge_rstar;	/* Bulge effective radius */
   sedstruct	*bsed;	/* Bulge SED */
   sedstruct	*dsed;	/* Disk SED */
@@ -81,6 +82,7 @@ typedef struct
   double	dsize;		/* Disk apparent scale-length (in arcsec) */
   double	dflat;		/* Disk apparent flattening (A/R) */
   double	*bt;		/* Apparent bulge/total in each passband */
+  double	refdm_extinct;	/* Internal extinction in ref. passband */ 
   double	mabs;		/* Absolute magnitude in ref. passband */
   double	refmag;		/* Apparent magnitude in ref. passband */
   double	*mag;		/* Apparent magnitude in each passband */
@@ -101,7 +103,8 @@ double		gal_bulgeflat(double cosi),
 		gal_cosi(void),
 		gal_disksize(galtypestruct *galtype, double mabs),
 		gal_mag(galtypestruct *galtype, double mabs, double z,
-			sedstruct *pb, sedstruct *dsed, double *btout);
+			sedstruct *pb, sedstruct *bsed, sedstruct *dsed,
+		double *btout);
 
 void		galtype_end(galtypestruct *galtype),
 		gal_end(galstruct *gal),

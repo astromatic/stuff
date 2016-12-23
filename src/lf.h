@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		22/12/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -42,7 +42,7 @@ typedef struct
   double	phistar;	/* Schechter's phi* parameter (m-3) */
   double	mstar;		/* Schechter's M* parameter (mag) */
   double	dmstar;		/* Change in M* due to z or other factor */
-  double	dmstar_faceon;	/* Change in M* due to extinction */
+  double	dmstar_faceon;	/* Average change in M* due to extinction */
   double	alpha;		/* Schechter's alpha parameter */
   double	mabsmin,mabsmax;/* Bounds of the LF */
   double	mstarevol;	/* M* evolution factor dm* / ln(1+z) */

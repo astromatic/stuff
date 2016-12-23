@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		23/11/2016
+*	Last modified:		22/12/2016
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -302,7 +302,7 @@ void	makeit(void)
         {
 /*------ Compute a lower limit to the brigthness of detectable galaxies */
         mabsmax = prefs.maglim[1] - gal_mag(galtype[g], 0.0, zlow, refpb,
-					NULL, NULL);
+					NULL, NULL, NULL);
         if (lf->mabsmax < mabsmax)
           mabsmax = lf->mabsmax;
         }
