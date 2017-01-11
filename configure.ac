@@ -107,7 +107,7 @@ AC_CHECK_FUNCS([getenv floor pow sqrt strchr strcspn strtol lgamma \
 datadir2=$(URBI_RESOLVE_DIR([$datadir]))
 
 # Provide a special option for the default XSLT URL
-with_stuff_datadir="$datadir2/$PACKAGE_NAME/data"
+with_stuff_datadir="$datadir2/$PACKAGE_TARNAME/data"
 AC_ARG_WITH(stuff-datadir,
         [AS_HELP_STRING([--with-stuff-datadir=<default path for Stuff data>],
         [Provide an alternative path for Stuff data])])

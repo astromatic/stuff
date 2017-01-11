@@ -7,7 +7,7 @@
 #
 #	This file part of:	Stuff
 #
-#	Copyright:		(C) 2005-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+#	Copyright:		(C) 2005-2017 IAP/CNRS/UPMC
 #
 #	License:		GNU General Public License
 #
@@ -22,7 +22,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		26/10/2010
+#	Last modified:		11/01/2017
 #
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -31,23 +31,23 @@ AUTOMAKE_OPTIONS	= foreign no-dependencies
 SUBDIRS			= src man
 EXTRA_DIST		= data doc autogen.sh \
 			  AUTHORS BUGS ChangeLog COPYRIGHT \
-			  HISTORY INSTALL LICENSE README THANKS
-RPM_ROOTDIR		= `rpmbuild --nobuild -E %_topdir`
+			  HISTORY INSTALL LICENSE README.md THANKS
+RPM_ROOTDIR		= `rpmbuild -E %_topdir`
 RPM_SRCDIR		= $(RPM_ROOTDIR)/SOURCES
 dist-hook:
 	rm -rf `find $(distdir) -name .svn`
 
 rpm:	dist
-	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
-	rpmbuild -ba --clean --nodeps $(PACKAGE_NAME).spec
+	cp -f $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
+	rpmbuild -ba --clean --nodeps $(PACKAGE_TARNAME).spec
 
 rpm-icc:	dist
-	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
-	USE_ICC="1" rpmbuild -ba --clean --nodeps $(PACKAGE_NAME).spec
+	cp -f $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
+	USE_ICC="1" rpmbuild -ba --clean --nodeps $(PACKAGE_TARNAME).spec
 
 rpm-best:	dist
-	cp -f $(PACKAGE_NAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
-	USE_BEST="1" rpmbuild -ba --clean --nodeps $(PACKAGE_NAME).spec
+	cp -f $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
+	USE_BEST="1" rpmbuild -ba --clean --nodeps $(PACKAGE_TARNAME).spec
 
 install-data-local:
 	if test -e $(DESTDIR)$(pkgdatadir); then \

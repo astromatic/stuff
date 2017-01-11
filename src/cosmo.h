@@ -33,7 +33,7 @@
 /*--------------------------------- constants -------------------------------*/
 
 #define		Z_MIN	0.001	/* Minimum redshift spanned by cosmology */
-#define		Z_MAX	20.0	/* Maximum redshift spanned by cosmology */
+#define		Z_MAX	0.02	/* Maximum redshift spanned by cosmology */
 #define		Z_NSTEP	10000	/* Number of integration steps */
 
 /*------------------------------ global variables ---------------------------*/
