@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2017 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		11/01/2017
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -33,7 +33,7 @@
 /*--------------------------------- constants -------------------------------*/
 
 #define		Z_MIN	0.001	/* Minimum redshift spanned by cosmology */
-#define		Z_MAX	0.02	/* Maximum redshift spanned by cosmology */
+#define		Z_MAX	20.0	/* Maximum redshift spanned by cosmology */
 #define		Z_NSTEP	10000	/* Number of integration steps */
 
 /*------------------------------ global variables ---------------------------*/

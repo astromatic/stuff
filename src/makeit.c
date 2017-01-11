@@ -479,7 +479,7 @@ void	makeit(void)
 
 /* Free memory */
   NFPRINTF(OUTPUT, "Freeing memory...")
-  if (celsys)
+  if (angcoordflag)
     celsys_end(celsys);
   for (c=0; c<ncluster; c++)
     free(clusters[c]);
