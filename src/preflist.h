@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2017 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		12/09/2016
+*	Last modified:		08/04/2017
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -196,7 +196,7 @@ char *default_prefs[] =
 " ",
 "#------------------------------- Extinction ----------------------------------",
 " ",
-"EXTINCT_NAME    LMC.ext         # Internal extinction law",
+"EXTINCT_NAME    LMC_Gordon03.ext # Internal extinction law",
 "DISK_EXTINCT    0.0,0.75,1.23,1.47,1.47,1.23",
 "                                # de Vaucouleurs' alpha (extinction parameter)",
 " ",
