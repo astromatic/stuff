@@ -64,7 +64,7 @@ void	stars_add(FILE **catfiles, int ncatfiles,
 #endif
 
 /* Initialize the random generator */
-  NFPRINTF(OUTPUT, "Initializing star random generator...")
+  NFPRINTF(OUTPUT, "Initializing star random generator...");
   init_random(prefs.starseed);
 
   return;
