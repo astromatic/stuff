@@ -166,23 +166,23 @@
 
 #define	RINT(x)	(int)(floor(x+0.5))
 
-#define	NPRINTF		if (prefs.verbose_type == NORM) fprintf
+#define	NPRINTF		if (prefs.verbose_type == NORMAL) fprintf
 
-#define	NFPRINTF(w,x)	{if (prefs.verbose_type == NORM) \
-				fprintf(w, "\33[1M> %s\n\33[1A",x); \
-			else if (prefs.verbose_type == FULL) \
-				fprintf(w, "%s.\n", x);}
+#define NFPRINTF(w,x) do {if (prefs.verbose_type == NORMAL) \
+        fprintf(w, "\33[1M> %s\n\33[1A",x); \
+      else if (prefs.verbose_type == FULL) \
+        fprintf(w, "%s.\n", x);} while (0)
 
 #define	FPRINTF		if (prefs.verbose_type == FULL)	fprintf
 
 #define QPRINTF		if (prefs.verbose_type != QUIET)	fprintf
 
-#define QIPRINTF(w,x)	{if (prefs.verbose_type == NORM) \
+#define QIPRINTF(w,x)	{if (prefs.verbose_type == NORMAL) \
 				fprintf(w, "\33[7m%s\33[0m\n", x); \
 			else if (prefs.verbose_type == LOG) \
 				fprintf(w, "%s\n", x);}
 
-#define QBPRINTF(w,x)	{if (prefs.verbose_type == NORM) \
+#define QBPRINTF(w,x)	{if (prefs.verbose_type == NORMAL) \
 				fprintf(w, "\33[5m%s\33[0m\n", x); \
 			else if (prefs.verbose_type == LOG) \
 				fprintf(w, "%s\n", x);}

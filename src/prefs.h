@@ -130,7 +130,7 @@ typedef struct
   int		nthreads;			/* Number of active threads */
 /* miscellaneous */
   char		datadir_name[MAXCHAR];	/* Global path for SEDs, filters,... */
-  enum {QUIET, NORM, LOG, FULL} verbose_type;	/* display type */
+  enum {QUIET, NORMAL, LOG, FULL} verbose_type;	/* display type */
   char		sdate_start[12];		/* SCAMP start date */
   char		stime_start[12];		/* SCAMP start time */
   char		sdate_end[12];			/* SCAMP end date */

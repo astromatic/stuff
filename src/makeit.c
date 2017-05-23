@@ -99,7 +99,7 @@ void	makeit(void)
 		prefs.nthreads>1? "s":"");
 
 /* Set frequently used variables */
-  NFPRINTF(OUTPUT, "Initializing constants...")
+  NFPRINTF(OUTPUT, "Initializing constants...");
 /* Cosmological parameters */
   H0 = prefs.h0*KM/MPC;
   H = prefs.h0/100.0;
@@ -142,9 +142,11 @@ void	makeit(void)
   sprintf(extdir_name, "%s/extinct/", prefs.datadir_name);
   NFPRINTF(OUTPUT,"");
   NPRINTF(OUTPUT, "Extinct directory: %s\n", extdir_name);
+  NPRINTF(OUTPUT, "Extinct directory: %s\n", extdir_name);
+  NPRINTF(OUTPUT, "Extinct directory: %s\n", extdir_name);
 
 /* Get the observed passbands */
-  NFPRINTF(OUTPUT, "Loading passbands...")
+  NFPRINTF(OUTPUT, "Loading passbands...");
   for (p=0; p<npb; p++)
     pb[p] = sed_load(filterdir_name, prefs.pb_name[p]);
 
@@ -152,7 +154,7 @@ void	makeit(void)
   refpb = sed_load(filterdir_name, prefs.refpb_name);
 
 /* Get the calibration SED (which defines the magnitude system) */
-  NFPRINTF(OUTPUT, "Loading the calibration SEDs...")
+  NFPRINTF(OUTPUT, "Loading the calibration SEDs...");
   refcalibsed = sed_load(seddir_name, prefs.refcalibsed_name);
   for (p=0; p<npb; p++)
     pbcalibsed[p] = sed_load(seddir_name, prefs.pbcalibsed_name[p]);
@@ -160,14 +162,14 @@ void	makeit(void)
 /* Get the sky background SED */
   if (*prefs.backsed_name != '*')
     {
-    NFPRINTF(OUTPUT, "Loading the background SED...")
+    NFPRINTF(OUTPUT, "Loading the background SED...");
     backsed = sed_load(seddir_name, prefs.backsed_name);
     }
   else
     backsed = NULL;
 
 /* Calibrate the passbands in the chosen magnitude system */
-  NFPRINTF(OUTPUT, "Calibrating passbands...")
+  NFPRINTF(OUTPUT, "Calibrating passbands...");
   pb_calib(pb, pbcalibsed, npb, refpb, refcalibsed, backsed);
 
 /* Forget the calibration SED to gain memory */
@@ -176,33 +178,33 @@ void	makeit(void)
     sed_end(pbcalibsed[p]);
 
 /* Get the star SEDs */
-  NFPRINTF(OUTPUT, "Loading star SEDs...")
+  NFPRINTF(OUTPUT, "Loading star SEDs...");
   nstarsed = prefs.nstar_sedname;
   for (p=0; p<nstarsed; p++)
     starsed[p] = sed_load(seddir_name, prefs.star_sedname[p]);
 
 /* Calibrate the star SEDs */
-  NFPRINTF(OUTPUT, "Calibrating star SEDs...")
+  NFPRINTF(OUTPUT, "Calibrating star SEDs...");
   for (i=0; i<nstarsed; i++)
     sed_calib(starsed[i], refpb);
 
 /* Get the galaxy SEDs */
-  NFPRINTF(OUTPUT, "Loading galaxy SEDs...")
+  NFPRINTF(OUTPUT, "Loading galaxy SEDs...");
   ngalsed = prefs.ngal_sedname;
   for (p=0; p<ngalsed; p++)
     galsed[p] = sed_load(seddir_name, prefs.gal_sedname[p]);
 
 /* Calibrate the galaxy SEDs */
-  NFPRINTF(OUTPUT, "Calibrating galaxy SEDs...")
+  NFPRINTF(OUTPUT, "Calibrating galaxy SEDs...");
   for (i=0; i<ngalsed; i++)
     sed_calib(galsed[i], refpb);
 
 /* Get the internal extinction law (in tau units) */
-  NFPRINTF(OUTPUT, "Loading the internal extinction law...")
+  NFPRINTF(OUTPUT, "Loading the internal extinction law...");
   tau_i = sed_load(extdir_name, prefs.extinct_name);
 
 /* Initialize field galaxy types (luminosity functions, SEDs) */
-  NFPRINTF(OUTPUT, "Initializing galaxy types...")
+  NFPRINTF(OUTPUT, "Initializing galaxy types...");
   ngaltype = prefs.gal_ntype;
   QMALLOC(galtype, galtypestruct *, ngaltype);
   QMALLOC(lf, lfstruct, 1);	/* Used as a template only */
@@ -236,14 +238,14 @@ void	makeit(void)
   dlc = prefs.integ_zstep*MPC/H;
 
 /* Initialize the random generator */
-  NFPRINTF(OUTPUT, "Initializing galaxy random generator...")
+  NFPRINTF(OUTPUT, "Initializing galaxy random generator...");
   init_random(prefs.galseed);
 
 /* Check out if a list of clusters is provided */
   ncluster = 0;
   if (strcmp(prefs.clusterlist_name, "NONE"))
     {
-    NFPRINTF(OUTPUT, "Reading cluster list...")
+    NFPRINTF(OUTPUT, "Reading cluster list...");
     cluster_read(prefs.clusterlist_name, &clusters, &ncluster);
     NFPRINTF(OUTPUT,"");
     NPRINTF(OUTPUT, "%d cluster%s found\n", ncluster, ncluster>1?"s":"");
@@ -252,13 +254,13 @@ void	makeit(void)
     }
 
 /* Open the output catalogs */
-  NFPRINTF(OUTPUT, "Creating catalogs...")
+  NFPRINTF(OUTPUT, "Creating catalogs...");
   for (p=0; p<npb; p++)
     if ((catfile[p] = fopen(prefs.cat_name[p],"w")) == NULL)
       error(EXIT_FAILURE,"*ERROR*: can't create ", prefs.cat_name[p]);
 
 /* Integrate from "far away" to 0 redshift */
-  NFPRINTF(OUTPUT, "Generating galaxies...")
+  NFPRINTF(OUTPUT, "Generating galaxies...");
   zmax = Z_MAX;
   nsource = 0;
   clustindex = 0;
@@ -275,7 +277,7 @@ void	makeit(void)
     z = (zlow+zhigh)/2.0;
 
     sprintf(gstr, "Generating galaxies... z =%6.2f", z);
-    NFPRINTF(OUTPUT, gstr)
+    NFPRINTF(OUTPUT, gstr);
 
 /*-- Compute corrected passbands because of IGM opacity */
     if (prefs.igm_type != IGM_NONE)
@@ -422,7 +424,7 @@ void	makeit(void)
 /* Generate field stars */
   if ((prefs.starflag)) {
 //-- Initialize the random generator
-    NFPRINTF(OUTPUT, "Initializing star random generator...")
+    NFPRINTF(OUTPUT, "Initializing star random generator...");
     init_random(prefs.starseed);
 
     dn = domega*10000000000.0;
@@ -468,7 +470,7 @@ void	makeit(void)
   }
 
 /* Close catalogs */
-  NFPRINTF(OUTPUT, "Closing catalogs...")
+  NFPRINTF(OUTPUT, "Closing catalogs...");
   for (p=0; p<npb; p++)
     if (fclose(catfile[p]))
       error(EXIT_FAILURE,"*ERROR*: can't close ", prefs.cat_name[p]);
@@ -478,7 +480,7 @@ void	makeit(void)
     cluster_write(prefs.clusterlistout_name, clusters, ncluster);
 
 /* Free memory */
-  NFPRINTF(OUTPUT, "Freeing memory...")
+  NFPRINTF(OUTPUT, "Freeing memory...");
   if (angcoordflag)
     celsys_end(celsys);
   for (c=0; c<ncluster; c++)

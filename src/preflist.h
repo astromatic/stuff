@@ -121,7 +121,7 @@ pkeystruct key[] =
   {"SPHEROID_RKNEE", P_FLOAT, &prefs.gal_brknee, 0,0, 0.0, 1e12},
   {"SPHEROID_MKNEE", P_FLOAT, &prefs.gal_bmknee, 0,0, -100.0,100.0},
   {"VERBOSE_TYPE", P_KEY, &prefs.verbose_type, 0,0, 0.0,0.0,
-   {"QUIET","NORMAL","FULL",""}},
+   {"QUIET","NORMAL","LOG", "FULL",""}},
 
   {""}
  };
