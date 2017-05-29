@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		08/04/2017
+*	Last modified:		29/05/2017
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -70,7 +70,7 @@ pkeystruct key[] =
   {"EXTINCT_NAME", P_STRING, prefs.extinct_name},
   {"GAIN", P_FLOATLIST, prefs.gain,  0,0, 0.0, BIG,
    {""}, 1, SED_MAXNPB, &prefs.ngain},
-  {"H0", P_FLOAT, &prefs.h0, 0,0, 1.0, 1000.0},
+  {"H_0", P_FLOAT, &prefs.h0, 0,0, 1.0, 1000.0},
   {"HUBBLE_TYPE", P_FLOATLIST, prefs.gal_hubtype, 0,0, -6.0, 10.0,
    {""}, 1, GAL_MAXNTYPE, &prefs.ngal_hubtype},
   {"IGM_TYPE", P_KEY, &prefs.igm_type, 0,0, 0.0,0.0,
@@ -161,7 +161,7 @@ char *default_prefs[] =
 " ",
 "#------------------------------- Cosmology -----------------------------------",
 " ",
-"H0              70.0            # Hubble constant (km.s-1.Mpc-1)",
+"H_0             70.0            # Hubble constant (km.s-1.Mpc-1)",
 "OMEGA_M         0.3             # Matter density in units of critical density",
 "OMEGA_LAMBDA    0.7             # Cosmol constant in units of critical density",
 "*DISTANCE_STEP   5.0             # Integration step along z (h-1.Mpc)",
