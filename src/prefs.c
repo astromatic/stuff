@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2017 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		29/05/2017
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -531,16 +531,17 @@ void	useprefs(void)
   for (j=prefs.npbcalibsed_name; j<prefs.npb_name; j++)
     QMEMCPY(prefs.pbcalibsed_name[i], prefs.pbcalibsed_name[j], char, n);
 
-/* Fill-in image and pixel sizes */
-  n =prefs.npb_name;  
+/* Check the number of field size parameters */
   if (prefs.coord_type != COORD_PIXEL) {
     if (prefs.nfield_size == 2 || prefs.field_size[0] > 90.0)
       error(EXIT_FAILURE, "*Error*: radius in degrees expected for FIELD_SIZE ",
 	"when COORD_TYPE != PIXEL");
   } else
-    for (j=(i=prefs.nfield_size)-1; i<n; i++)
+    for (j=(i=prefs.nfield_size)-1; i<2; i++)
       prefs.field_size[i] = prefs.field_size[j];
 
+/* Fill-in channel-dependent parameters */
+  n =prefs.npb_name;  
   if (prefs.narea < n)
     for (j=(i=prefs.narea)-1; i<n; i++)
       prefs.area[i] = prefs.area[j];
@@ -550,6 +551,7 @@ void	useprefs(void)
   if (prefs.nobsdetect_type < n)
     for (j=(i=prefs.nobsdetect_type)-1; i<n; i++)
       prefs.obsdetect_type[i] = prefs.obsdetect_type[j];
+
 /* Galaxy types */
   n = prefs.ngal_bt;
   if (prefs.ngal_hubtype!=n
