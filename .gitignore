@@ -1,0 +1,10 @@
+autom4te.cache/*
+src/.deps/*
+src/*.o
+autoconf/*
+config.h
+aclocal.m4
+config.log
+config.status
+configure
+stamp-h1
