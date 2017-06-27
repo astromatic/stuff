@@ -8,3 +8,14 @@ config.log
 config.status
 configure
 stamp-h1
+config.h.in
+Makefile
+Makefile.in
+man/Makefile
+man/Makefile.in
+man/stuff.1
+src/Makefile
+src/Makefile.in
+src/stuff
+stuff.spec
+man/stuff.1
