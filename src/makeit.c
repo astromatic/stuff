@@ -427,7 +427,7 @@ void	makeit(void)
     NFPRINTF(OUTPUT, "Initializing star random generator...");
     init_random(prefs.starseed);
 
-    dn = domega*10000000000.0;
+    dn = domega*10000000.0;
     n = (int)random_poisson(dn);
     nsource += n;
     sprintf(gstr, "Adding %d stars...", n);
