@@ -203,7 +203,7 @@ debian/changelog
 doc/Makefile
 doc/src/conf.py
 man/Makefile
-man/stuff.1])
-src/Makefile
+man/stuff.1
+src/Makefile])
 AC_OUTPUT
 
