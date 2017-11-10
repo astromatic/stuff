@@ -46,3 +46,6 @@
 .. |XSLT| replace:: :abbr:`XSLT (eXtensible Stylesheet Language Transformations)`
 .. _XSLT: http://en.wikipedia.org/wiki/XSLT
 
+.. |Xspec| replace:: :program:`XSpec`
+.. _Xspec: https://heasarc.gsfc.nasa.gov/xanadu/xspec/
+
