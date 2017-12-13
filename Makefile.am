@@ -22,20 +22,23 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		11/01/2017
+#	Last modified:		29/09/2017
 #
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 ACLOCAL_AMFLAGS		= -I m4
 AUTOMAKE_OPTIONS	= foreign no-dependencies
-SUBDIRS			= src man
-EXTRA_DIST		= data doc autogen.sh \
+SUBDIRS			= src man doc debian
+EXTRA_DIST		= data autogen.sh \
 			  AUTHORS BUGS ChangeLog COPYRIGHT \
 			  HISTORY INSTALL LICENSE README.md THANKS
-RPM_ROOTDIR		= `rpmbuild -E %_topdir`
+RPM_ROOTDIR		= `rpmbuild --nobuild -E %_topdir`
+
 RPM_SRCDIR		= $(RPM_ROOTDIR)/SOURCES
+DEB_SRCDIR		= ~/DEBIAN/SOURCES
+
 dist-hook:
-	rm -rf `find $(distdir) -name .svn`
+	rm -rf `find $(distdir) -type d \( -name .svn -o -name .git \)`
 
 rpm:	dist
 	cp -f $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
@@ -49,6 +52,18 @@ rpm-best:	dist
 	cp -f $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz $(RPM_SRCDIR)
 	USE_BEST="1" rpmbuild -ba --clean --nodeps $(PACKAGE_TARNAME).spec
 
+deb:	dist
+	mkdir -p $(DEB_SRCDIR)
+	tar -xvf $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz -C $(DEB_SRCDIR) 
+	cd $(DEB_SRCDIR)/$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
+	debuild -j4 -b -us -uc
+
+deb-best:	dist
+	mkdir -p $(DEB_SRCDIR)
+	tar -xvf $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz -C $(DEB_SRCDIR) 
+	cd $(DEB_SRCDIR)/$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
+	debuild --set-envvar=USE_BEST=1 --preserve-env --preserve-envvar=PATH -j4 -b -us -uc
+
 install-data-local:
 	if test -e $(DESTDIR)$(pkgdatadir); then \
 	  $(RM) -rf $(DESTDIR)$(pkgdatadir); \
@@ -57,5 +72,5 @@ install-data-local:
 	  $(mkinstalldirs) $(DESTDIR)$(pkgdatadir); \
 	fi;
 	cp -rf data $(DESTDIR)$(pkgdatadir)/data;
-	$(RM) -rf `find $(DESTDIR)$(pkgdatadir) -name .svn`
+	$(RM) -rf `find $(distdir) -type d \( -name .svn -o -name .git \)`
 

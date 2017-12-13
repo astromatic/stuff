@@ -20,7 +20,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Stuff.  If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		29/05/2017
+#	Last modified:		29/09/2017
 #
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -29,7 +29,7 @@ define([AC_CACHE_LOAD],)
 define([AC_CACHE_SAVE],)
 
 # This is your standard Bertin source code...
-AC_INIT(Stuff, 2.0.0a2, [https://github.com/astromatic/stuff],
+AC_INIT(Stuff, 2.0.0, [https://github.com/astromatic/stuff],
 	stuff, [http://astromatic.net/software/stuff])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR(src/makeit.c)
@@ -37,10 +37,12 @@ AC_CONFIG_AUX_DIR(autoconf)
 AC_CONFIG_HEADERS(config.h)
 AM_INIT_AUTOMAKE
 date=`date +%Y-%m-%d`
+date1=`date -R`
 date2=`date +"%a %b %d %Y"`
 date3=`date +"%B %Y"`
 AC_DEFINE_UNQUOTED(DATE, "$date", [Archive creation date])
-AC_SUBST(PACKAGER, "Emmanuel Bertin")
+AC_SUBST(PACKAGER, "AstrOmatic")
+AC_SUBST(DATE1, "$date1")
 AC_SUBST(DATE2, "$date2")
 AC_SUBST(DATE3, "$date3")
 
@@ -53,7 +55,7 @@ sinclude(acx_urbi_resolve_dir.m4)
 AC_MSG_RESULT([******** Configuring:  $PACKAGE_NAME $VERSION ($date) ********])
 
 # Provide special option for choosing automatically the compilation flags.
-AC_MSG_CHECKING([if compilation flags should be set automatically])
+AC_MSG_CHECKING([if compilation flags are set automatically])
 AC_ARG_ENABLE(auto-flags,
 	[AS_HELP_STRING([--enable-auto-flags],
 	[Let the configure script choose the compilation flags (default = no)])],
@@ -61,7 +63,7 @@ AC_ARG_ENABLE(auto-flags,
 	AC_MSG_RESULT([no]))
 
 # Provide special option for the Linux Intel C compiler
-AC_MSG_CHECKING([whether we should use the INTEL compiler])
+AC_MSG_CHECKING([whether the INTEL compiler is enabled])
 AC_ARG_ENABLE(icc,
 	[AS_HELP_STRING([--enable-icc],
 	[Use the Intel compiler (default = no)])],
@@ -116,10 +118,10 @@ AC_DEFINE_UNQUOTED([DATA_DIR], "$with_stuff_datadir",
 	[Default path for Stuff data])
 
 # Set flags for multithreading
-n_pthreads=256
+n_pthreads=1024
 AC_ARG_ENABLE(threads,
         [AS_HELP_STRING([--enable-threads@<:@=<max_number_of_threads>@:>@],
-	[Enable multhreading (on with up to 256 threads by default)])],
+	[Enable multhreading (on with up to 1024 threads by default)])],
     if test "$enableval" = "no"; then
       use_pthreads="no"
     else
@@ -158,7 +160,7 @@ if test "$use_pthreads" = "yes"; then
   ACX_PTHREAD
   CC="$PTHREAD_CC"
   [AM_CFLAGS="$AM_CFLAGS $PTHREAD_CFLAGS -D_REENTRANT"]
-  LIBS="$PTHREAD_LIBS $LIBS"
+  LIBS="$LIBS $PTHREAD_LIBS"
 fi
 AM_CONDITIONAL(USE_THREADS, [test $use_pthreads = "yes"])
 
@@ -195,9 +197,13 @@ AC_MSG_RESULT([***************************************************************])
 
 AC_CONFIG_FILES([
 Makefile
-man/Makefile
-src/Makefile
 stuff.spec
-man/stuff.1])
+debian/Makefile
+debian/changelog
+doc/Makefile
+doc/src/conf.py
+man/Makefile
+man/stuff.1
+src/Makefile])
 AC_OUTPUT
 
