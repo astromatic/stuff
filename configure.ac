@@ -7,7 +7,7 @@
 #
 #	This file part of:	Stuff
 #
-#	Copyright:		(C) 2005-2017 IAP/CNRS/UPMC
+#	Copyright:		(C) 2005-2020 IAP/CNRS/SorbonneU
 #
 #	Stuff is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Stuff.  If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		29/09/2017
+#	Last modified:		02/01/2020
 #
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -51,8 +51,19 @@ sinclude(acx_prog_cc_optim.m4)
 sinclude(acx_pthread.m4)
 sinclude(acx_urbi_resolve_dir.m4)
 
+# Provide a special option for setting the package release number
+AC_ARG_WITH(release,
+	[AS_HELP_STRING([--with-release=<release number>],
+	[set the package release number (default = 1)])],
+	[],
+	[with_release="no"])
+if test "$with_release" = "no"; then
+  with_release=1
+fi
+AC_SUBST(PACKAGE_RELEASE, "$with_release")
+
 # Display pakage and version number
-AC_MSG_RESULT([******** Configuring:  $PACKAGE_NAME $VERSION ($date) ********])
+AC_MSG_RESULT([******** Configuring:  $PACKAGE_NAME $PACKAGE_VERSION - $PACKAGE_RELEASE ($date) ********])
 
 # Provide special option for choosing automatically the compilation flags.
 AC_MSG_CHECKING([if compilation flags are set automatically])
@@ -120,7 +131,7 @@ AC_DEFINE_UNQUOTED([DATA_DIR], "$with_stuff_datadir",
 # Set flags for multithreading
 n_pthreads=1024
 AC_ARG_ENABLE(threads,
-        [AS_HELP_STRING([--enable-threads@<:@=<max_number_of_threads>@:>@],
+	[AS_HELP_STRING([--enable-threads@<:@=<max_number_of_threads>@:>@],
 	[Enable multhreading (on with up to 1024 threads by default)])],
     if test "$enableval" = "no"; then
       use_pthreads="no"
@@ -137,7 +148,7 @@ AC_ARG_ENABLE(threads,
 AC_MSG_CHECKING([for profiler mode])
 AC_ARG_ENABLE(profiling,
 	[AS_HELP_STRING([--enable-profiling],
-	[Enable special mode for profiling (default = no)])],
+	[Enable special mode for profiling (default = no)])]
 	AC_MSG_RESULT([yes]),
 	AC_MSG_RESULT([no]))
 
@@ -206,4 +217,3 @@ man/Makefile
 man/stuff.1
 src/Makefile])
 AC_OUTPUT
-

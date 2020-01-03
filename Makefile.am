@@ -7,7 +7,7 @@
 #
 #	This file part of:	Stuff
 #
-#	Copyright:		(C) 2005-2017 IAP/CNRS/UPMC
+#	Copyright:		(C) 2005-2020 IAP/CNRS/SorbonneU
 #
 #	License:		GNU General Public License
 #
@@ -22,7 +22,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		29/09/2017
+#	Last modified:		02/01/2020
 #
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -33,7 +33,6 @@ EXTRA_DIST		= data autogen.sh \
 			  AUTHORS BUGS ChangeLog COPYRIGHT \
 			  HISTORY INSTALL LICENSE README.md THANKS
 RPM_ROOTDIR		= `rpmbuild --nobuild -E %_topdir`
-
 RPM_SRCDIR		= $(RPM_ROOTDIR)/SOURCES
 DEB_SRCDIR		= ~/DEBIAN/SOURCES
 
@@ -56,13 +55,13 @@ deb:	dist
 	mkdir -p $(DEB_SRCDIR)
 	tar -xvf $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz -C $(DEB_SRCDIR) 
 	cd $(DEB_SRCDIR)/$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
-	debuild -j4 -b -us -uc
+	debuild --set-envvar=PACKAGE_RELEASE=$(PACKAGE_RELEASE) -j4 -b -us -uc
 
 deb-best:	dist
 	mkdir -p $(DEB_SRCDIR)
 	tar -xvf $(PACKAGE_TARNAME)-$(PACKAGE_VERSION).tar.gz -C $(DEB_SRCDIR) 
 	cd $(DEB_SRCDIR)/$(PACKAGE_TARNAME)-$(PACKAGE_VERSION)
-	debuild --set-envvar=USE_BEST=1 --preserve-env --preserve-envvar=PATH -j4 -b -us -uc
+	debuild  --set-envvar=PACKAGE_RELEASE=$(PACKAGE_RELEASE) --set-envvar=USE_BEST=1 --preserve-env --preserve-envvar=PATH -j4 -b -us -uc
 
 install-data-local:
 	if test -e $(DESTDIR)$(pkgdatadir); then \
