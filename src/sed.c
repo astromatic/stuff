@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2018 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		21/11/2016
+*	Last modified:		09/04/2018
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -227,13 +227,15 @@ INPUT	Pointer to the sed.
 OUTPUT	-.
 NOTES	Memory is freed upon exit.
 AUTHOR	E. Bertin (IAP)
-VERSION	27/05/2013
+VERSION	09/04/2018
 */
 void	sed_end(sedstruct *sed)
   {
-  free(sed->wave);
-  free(sed->data);
-  free(sed);
+  if (sed) {
+    free(sed->wave);
+    free(sed->data);
+    free(sed);
+  }
 
   return;
   }

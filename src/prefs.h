@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2018 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		12/09/2016
+*	Last modified:		09/04/2018
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -87,7 +87,9 @@ typedef struct
   char		extinct_name[MAXCHAR];		/* Extinction Al/Av filename */
   double	gal_iextinc[GAL_MAXNTYPE];	/* External extinc. */
   int		ngal_iextinc;			/* Number of alpha's */
-/* Luminosity functions */
+/* Galaxies */
+  int		gal_flag;			/* Add Galaxies? */
+/* Galaxy luminosity functions */
   double	lf_phistar[GAL_MAXNTYPE]; /* Schechter's phi* (h-3.Mpc-3) */
   int		nlf_phistar;		  /* Number of phi*'s */
   double	lf_phistarevol[GAL_MAXNTYPE];	  /* P = dln(phi*) / dln(1+z)*/
@@ -99,7 +101,7 @@ typedef struct
   double	lf_alpha[GAL_MAXNTYPE];	  /* Schechter's alpha */
   int		nlf_alpha;		  /* Number of alpha's */
   double	lf_mlim[2];	/* Bounds to the LF (mag+5.log10(h) */
-/* Morphology */
+/* Galaxy morphology */
   double	gal_hubtype[GAL_MAXNTYPE];/* Hubble type */
   int		ngal_hubtype;		  /* Number of Hubble types */
   double	gal_bt[GAL_MAXNTYPE];	  /* B/T ratios */
@@ -122,7 +124,9 @@ typedef struct
   double	lens_gamma[2];		  /* Shear lensing parameters */
   int		nlens_gamma;		  /* Number of shear parameters */
 /* Stars */
-  int		starflag;	/* Include stars? */
+  int		star_flag;	/* Add stars? */
+  double	star_countnumber;/* nb of stars /deg2 brighter than mag limit */
+  double	star_countslope;	/* Dex slope of star counts */
   double	galcoord[2];	/* Galactic coordinates */
   int		starseed;	/* Seed for the random generator of stars */
   int		galseed;	/* Seed for the random generator of galaxies */
