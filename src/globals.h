@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2021 IAP/CNRS/SorbonneU
 *
 *	License:		GNU General Public License
 *
@@ -22,15 +22,14 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		08/01/2021
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
 #include	"types.h"
 
 /*----------------------- miscellaneous variables ---------------------------*/
-char		gstr[MAXCHAR];
-int		bswapflag;
+extern char		gstr[MAXCHAR];
 
 /*------------------------------- functions ---------------------------------*/
 extern	void	error(int, char *, char *),

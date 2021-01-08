@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2017 IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2021 IAP/CNRS/SorbonneU
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		11/01/2017
+*	Last modified:		08/01/20201
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -38,7 +38,7 @@
 
 /*------------------------------ global variables ---------------------------*/
 
-double	H, H0, OmegaM, OmegaL, deltaMH;
+extern double	H, H0, OmegaM, OmegaL, deltaMH;
 
 /*-------------------------------- protos -----------------------------------*/
 

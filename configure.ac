@@ -7,7 +7,7 @@
 #
 #	This file part of:	Stuff
 #
-#	Copyright:		(C) 2005-2020 IAP/CNRS/SorbonneU
+#	Copyright:		(C) 2005-2021 IAP/CNRS/SorbonneU
 #
 #	Stuff is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 #	You should have received a copy of the GNU General Public License
 #	along with Stuff.  If not, see <http://www.gnu.org/licenses/>.
 #
-#	Last modified:		02/01/2020
+#	Last modified:		08/01/2021
 #
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -29,7 +29,7 @@ define([AC_CACHE_LOAD],)
 define([AC_CACHE_SAVE],)
 
 # This is your standard Bertin source code...
-AC_INIT(Stuff, 2.0.0, [https://github.com/astromatic/stuff],
+AC_INIT(Stuff, 2.0.1, [https://github.com/astromatic/stuff],
 	stuff, [http://astromatic.net/software/stuff])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR(src/makeit.c)

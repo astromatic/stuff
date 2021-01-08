@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2021 IAP/CNRS/SorbonneU
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		21/11/2016
+*	Last modified:		08/01/2021
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -38,6 +38,10 @@
 #include "globals.h"
 #include "cosmo.h"
 #include "lf.h"
+
+/*------------------------------ global variables ---------------------------*/
+
+double	H, H0, OmegaM, OmegaL, deltaMH;
 
 /******************************** cosmo_dconf ********************************/
 /*

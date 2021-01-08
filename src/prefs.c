@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2017 IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2021 IAP/CNRS/SorbonneU
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		29/05/2017
+*	Last modified:		08/01/2021
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -52,6 +52,8 @@
 #include	"globals.h"
 #include 	"prefs.h"
 #include	"preflist.h"
+
+prefstruct	prefs;
 
 /********************************* dumpprefs ********************************/
 /*
@@ -472,9 +474,6 @@ void	useprefs(void)
 #ifdef USE_THREADS
    int			nproc;
 #endif
-
-/* Test if byteswapping will be needed */
-  bswapflag = *((char *)&ashort);
 
 /* Multithreading */
 #ifdef USE_THREADS
