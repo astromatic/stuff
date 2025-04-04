@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2016 IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2018 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		22/12/2016
+*	Last modified:		10/04/2018
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -52,6 +52,9 @@
 #include "lf.h"
 #include "random.h"
 #include "sed.h"
+
+#define	EPS_RANDFLUX	1e-8	/* = dynamic range of 20 mag in stellar flux */
+
 
 /********************************** makeit ***********************************/
 void	makeit(void)
@@ -177,182 +180,177 @@ void	makeit(void)
   for (p=0; p<npb; p++)
     sed_end(pbcalibsed[p]);
 
-/* Get the star SEDs */
-  NFPRINTF(OUTPUT, "Loading star SEDs...");
-  nstarsed = prefs.nstar_sedname;
-  for (p=0; p<nstarsed; p++)
-    starsed[p] = sed_load(seddir_name, prefs.star_sedname[p]);
-
-/* Calibrate the star SEDs */
-  NFPRINTF(OUTPUT, "Calibrating star SEDs...");
-  for (i=0; i<nstarsed; i++)
-    sed_calib(starsed[i], refpb);
-
-/* Get the galaxy SEDs */
-  NFPRINTF(OUTPUT, "Loading galaxy SEDs...");
-  ngalsed = prefs.ngal_sedname;
-  for (p=0; p<ngalsed; p++)
-    galsed[p] = sed_load(seddir_name, prefs.gal_sedname[p]);
-
-/* Calibrate the galaxy SEDs */
-  NFPRINTF(OUTPUT, "Calibrating galaxy SEDs...");
-  for (i=0; i<ngalsed; i++)
-    sed_calib(galsed[i], refpb);
-
-/* Get the internal extinction law (in tau units) */
-  NFPRINTF(OUTPUT, "Loading the internal extinction law...");
-  tau_i = sed_load(extdir_name, prefs.extinct_name);
-
-/* Initialize field galaxy types (luminosity functions, SEDs) */
-  NFPRINTF(OUTPUT, "Initializing galaxy types...");
-  ngaltype = prefs.gal_ntype;
-  QMALLOC(galtype, galtypestruct *, ngaltype);
-  QMALLOC(lf, lfstruct, 1);	/* Used as a template only */
-  lf->mabsmax = prefs.lf_mlim[1]+deltaMH;	/* This is indep. of gal.type*/
-  lf->mabsmin = prefs.lf_mlim[0]+deltaMH;	/* This is indep. of gal.type*/
-  for (g=0; g<ngaltype; g++)
-    {
-    lf->phistar = prefs.lf_phistar[g]*H*H*H/(MPC*MPC*MPC);
-/*-- Subtract from M* the average disk extinction to get the face-on value */
-    lf->mstar = prefs.lf_mstar[g] + deltaMH;
-    lf->alpha = prefs.lf_alpha[g];
-    lf->phistarevol = prefs.lf_phistarevol[g];
-    lf->mstarevol = prefs.lf_mstarevol[g];
-/*-- Spectral Energy Distributions (SEDs) */
-/*-- Bulge component */
-    if ((n=prefs.gal_bsedno[g]-1) >= ngalsed)
-      error(EXIT_FAILURE, "*Error*: no such Bulge SED-index", "");
-    bsed = galsed[n];
-/*-- Disk component */
-    if ((n=prefs.gal_dsedno[g]-1) >= ngalsed)
-      error(EXIT_FAILURE, "*Error*: no such Disk SED-index", "");
-    dsed = galsed[n];
-    galtype[g] = galtype_init(prefs.gal_hubtype[g], prefs.gal_bt[g],
-			prefs.gal_iextinc[g], lf, bsed, dsed, tau_i, refpb);
-    }
-
-  free(lf);
-  QMALLOC(lfevol, lfstruct, 1);	/* Used as a template only */
-
-/* Use an appropriate step (constant in comoving radial coordinate) */
-  dlc = prefs.integ_zstep*MPC/H;
-
-/* Initialize the random generator */
-  NFPRINTF(OUTPUT, "Initializing galaxy random generator...");
-  init_random(prefs.galseed);
-
-/* Check out if a list of clusters is provided */
-  ncluster = 0;
-  if (strcmp(prefs.clusterlist_name, "NONE"))
-    {
-    NFPRINTF(OUTPUT, "Reading cluster list...");
-    cluster_read(prefs.clusterlist_name, &clusters, &ncluster);
-    NFPRINTF(OUTPUT,"");
-    NPRINTF(OUTPUT, "%d cluster%s found\n", ncluster, ncluster>1?"s":"");
-    if (ncluster)
-      cluster_sortz(clusters, ncluster);
-    }
-
 /* Open the output catalogs */
   NFPRINTF(OUTPUT, "Creating catalogs...");
   for (p=0; p<npb; p++)
     if ((catfile[p] = fopen(prefs.cat_name[p],"w")) == NULL)
       error(EXIT_FAILURE,"*ERROR*: can't create ", prefs.cat_name[p]);
 
-/* Integrate from "far away" to 0 redshift */
-  NFPRINTF(OUTPUT, "Generating galaxies...");
-  zmax = Z_MAX;
   nsource = 0;
-  clustindex = 0;
-  for (zhigh=zmax; zhigh>0.0; zhigh=zlow)
-    {
-/*-- Use an appropriate step (constant in comoving radial coordinate) */
-    dz = dlc/cosmo_dlc(zhigh);
-    zlow = zhigh - dz;
-    if (zlow<0.0)
-      {
-      zlow = 0.0;
-      dz = zhigh - zlow;
-      }
-    z = (zlow+zhigh)/2.0;
 
-    sprintf(gstr, "Generating galaxies... z =%6.2f", z);
-    NFPRINTF(OUTPUT, gstr);
+/* Galaxies */
+  ngalsed = ngaltype = ncluster = 0;
+  galtype = NULL;
+  lfevol = NULL;
+  tau_i = NULL;
+  if ((prefs.gal_flag)) {
+/*-- Get the galaxy SEDs */
+    NFPRINTF(OUTPUT, "Loading galaxy SEDs...");
+    ngalsed = prefs.ngal_sedname;
+    for (p=0; p<ngalsed; p++)
+      galsed[p] = sed_load(seddir_name, prefs.gal_sedname[p]);
 
-/*-- Compute corrected passbands because of IGM opacity */
-    if (prefs.igm_type != IGM_NONE)
-      {
-      tau_igm = sed_igmmadauextinct(zlow);
-      for (p=0; p<npb; p++)
-        sed_extinc(pb[p], tau_igm, 1.0, &pbcorr[p]);
-      sed_end(tau_igm);
-      }
-    else
-      for (p=0; p<npb; p++)
-        pbcorr[p] = pb[p];
+/*-- Calibrate the galaxy SEDs */
+    NFPRINTF(OUTPUT, "Calibrating galaxy SEDs...");
+    for (i=0; i<ngalsed; i++)
+    sed_calib(galsed[i], refpb);
 
-/*-- Normalize cluster densities */
-    for (c=clustindex ;c<ncluster && clusters[c]->z > zlow; c++)
-      cluster_normdens(clusters[c], galtype, ngaltype);
+/*-- Get the internal galaxy extinction law (in tau units) */
+    NFPRINTF(OUTPUT, "Loading the internal extinction law...");
+    tau_i = sed_load(extdir_name, prefs.extinct_name);
 
-/*-- Loop over galaxy types */
+/*-- Initialize field galaxy types (luminosity functions, SEDs) */
+    NFPRINTF(OUTPUT, "Initializing galaxy types...");
+    ngaltype = prefs.gal_ntype;
+    QMALLOC(galtype, galtypestruct *, ngaltype);
+    QMALLOC(lf, lfstruct, 1);	/* Used as a template only */
+    lf->mabsmax = prefs.lf_mlim[1]+deltaMH;	/* This is indep. of gal.type*/
+    lf->mabsmin = prefs.lf_mlim[0]+deltaMH;	/* This is indep. of gal.type*/
     for (g=0; g<ngaltype; g++)
       {
-      lf = galtype[g]->lf;
-      bt = galtype[g]->bt;
-      if (zlow>0.0)
+      lf->phistar = prefs.lf_phistar[g]*H*H*H/(MPC*MPC*MPC);
+/*---- Subtract from M* the average disk extinction to get the face-on value */
+      lf->mstar = prefs.lf_mstar[g] + deltaMH;
+      lf->alpha = prefs.lf_alpha[g];
+      lf->phistarevol = prefs.lf_phistarevol[g];
+      lf->mstarevol = prefs.lf_mstarevol[g];
+/*---- Galaxy Spectral Energy Distributions (SEDs) */
+/*---- Bulge component */
+      if ((n=prefs.gal_bsedno[g]-1) >= ngalsed)
+        error(EXIT_FAILURE, "*Error*: no such Bulge SED-index", "");
+      bsed = galsed[n];
+/*---- Disk component */
+      if ((n=prefs.gal_dsedno[g]-1) >= ngalsed)
+        error(EXIT_FAILURE, "*Error*: no such Disk SED-index", "");
+      dsed = galsed[n];
+      galtype[g] = galtype_init(prefs.gal_hubtype[g], prefs.gal_bt[g],
+			prefs.gal_iextinc[g], lf, bsed, dsed, tau_i, refpb);
+      }
+
+    free(lf);
+    QMALLOC(lfevol, lfstruct, 1);	/* Used as a template only */
+
+/*-- Use an appropriate step (constant in comoving radial coordinate) */
+    dlc = prefs.integ_zstep*MPC/H;
+
+/*-- Initialize the random generator */
+    NFPRINTF(OUTPUT, "Initializing galaxy random generator...");
+    init_random(prefs.galseed);
+
+/*-- Check out if a list of clusters is provided */
+    if (strcmp(prefs.clusterlist_name, "NONE"))
+      {
+      NFPRINTF(OUTPUT, "Reading cluster list...");
+      cluster_read(prefs.clusterlist_name, &clusters, &ncluster);
+      NFPRINTF(OUTPUT,"");
+      NPRINTF(OUTPUT, "%d cluster%s found\n", ncluster, ncluster>1?"s":"");
+      if (ncluster)
+        cluster_sortz(clusters, ncluster);
+      }
+
+/*-- Integrate from "far away" to 0 redshift */
+    NFPRINTF(OUTPUT, "Generating galaxies...");
+    zmax = Z_MAX;
+    clustindex = 0;
+    for (zhigh=zmax; zhigh>0.0; zhigh=zlow)
+      {
+/*---- Use an appropriate step (constant in comoving radial coordinate) */
+      dz = dlc/cosmo_dlc(zhigh);
+      zlow = zhigh - dz;
+      if (zlow<0.0)
         {
-/*------ Compute a lower limit to the brigthness of detectable galaxies */
-        mabsmax = prefs.maglim[1] - gal_mag(galtype[g], 0.0, zlow, refpb,
-					NULL, NULL, NULL);
-        if (lf->mabsmax < mabsmax)
-          mabsmax = lf->mabsmax;
+        zlow = 0.0;
+        dz = zhigh - zlow;
+        }
+      z = (zlow+zhigh)/2.0;
+
+      sprintf(gstr, "Generating galaxies... z =%6.2f", z);
+      NFPRINTF(OUTPUT, gstr);
+
+/*---- Compute corrected passbands because of IGM opacity */
+      if (prefs.igm_type != IGM_NONE)
+        {
+        tau_igm = sed_igmmadauextinct(zlow);
+        for (p=0; p<npb; p++)
+          sed_extinc(pb[p], tau_igm, 1.0, &pbcorr[p]);
+        sed_end(tau_igm);
         }
       else
-        mabsmax = lf->mabsmax;
+        for (p=0; p<npb; p++)
+          pbcorr[p] = pb[p];
 
-/*---- Make the luminosity function evolve with redshift */
+/*---- Normalize cluster densities */
+      for (c=clustindex ;c<ncluster && clusters[c]->z > zlow; c++)
+        cluster_normdens(clusters[c], galtype, ngaltype);
+
+/*---- Loop over galaxy types */
+      for (g=0; g<ngaltype; g++)
+        {
+        lf = galtype[g]->lf;
+        bt = galtype[g]->bt;
+        if (zlow>0.0)
+          {
+/*-------- Compute a lower limit to the brigthness of detectable galaxies */
+          mabsmax = prefs.maglim[1] - gal_mag(galtype[g], 0.0, zlow, refpb,
+					NULL, NULL, NULL);
+          if (lf->mabsmax < mabsmax)
+            mabsmax = lf->mabsmax;
+          }
+        else
+          mabsmax = lf->mabsmax;
+
+/*------ Make the luminosity function evolve with redshift */
       lf_evol(lf, z, lfevol);
 
-/*---- Field galaxies */
-/*---- Compute the volume element and the local density -> dN = n*dV */
-      galdens = lf_intschechter(lfevol, lfevol->mabsmin, mabsmax);
-      dn = cosmo_dvol(z)*dz*domega*galdens;
-      n = random_poisson(dn);
-      nsource += n;
-/*---- Generate field galaxies */
-      for (i=n; i--;)
-        {
-/*------ Redshift */
-        z = random_double()*(zhigh-zlow)+zlow;
-        gal = gal_init(galtype[g], z, mabsmax, refpb, pbcorr, npb);
-        if (gal->refmag < prefs.maglim[0] || gal->refmag > prefs.maglim[1])
+/*------ Field galaxies */
+/*------ Compute the volume element and the local density -> dN = n*dV */
+        galdens = lf_intschechter(lfevol, lfevol->mabsmin, mabsmax);
+        dn = cosmo_dvol(z)*dz*domega*galdens;
+        n = random_poisson(dn);
+        nsource += n;
+/*------ Generate field galaxies */
+        for (i=n; i--;)
           {
-          gal_end(gal);
-          continue;
-          }
-/*------ Add constant shear */
-        if (shearflag)
-          gal_shear(gal, prefs.lens_kappa, prefs.lens_gamma, npb);
+/*-------- Redshift */
+          z = random_double()*(zhigh-zlow)+zlow;
+          gal = gal_init(galtype[g], z, mabsmax, refpb, pbcorr, npb);
+          if (gal->refmag < prefs.maglim[0] || gal->refmag > prefs.maglim[1])
+            {
+            gal_end(gal);
+            continue;
+            }
+/*-------- Add constant shear */
+          if (shearflag)
+            gal_shear(gal, prefs.lens_kappa, prefs.lens_gamma, npb);
 
-/*------ Randomize coordinates */
-        x = random_double();
-        y = random_double();
-        if (angcoordflag) {
-/*-------- Position in celestial (angular) coordinates */
-          pos[0] = x * 360.0;
-          pos[1] = asin(1.0 - y * omcradius) / DEG;
-/*-------- Convert to equatorial */
-          celsys_to_eq(celsys, pos);
-        } else {
-/*-------- Position in Cartesian (pixel) coordinates */
-          pos[0] = x * xscale - xoffset;
-          pos[1] = y * yscale - yoffset;
-        }
-/*------ Now in each observed passband */
-        for (p=0; p<npb; p++)
-          {
-          fprintf(catfile[p],
+/*-------- Randomize coordinates */
+          x = random_double();
+          y = random_double();
+          if (angcoordflag) {
+/*---------- Position in celestial (angular) coordinates */
+            pos[0] = x * 360.0;
+            pos[1] = asin(1.0 - y * omcradius) / DEG;
+/*---------- Convert to equatorial */
+            celsys_to_eq(celsys, pos);
+          } else {
+/*---------- Position in Cartesian (pixel) coordinates */
+            pos[0] = x * xscale - xoffset;
+            pos[1] = y * yscale - yoffset;
+          }
+/*-------- Now in each observed passband */
+          for (p=0; p<npb; p++)
+            {
+            fprintf(catfile[p],
 		angcoordflag ? "200 %11.7f %+11.7f %8.4f %5.3f "
 			"%9.3f %5.3f %+7.2f %9.3f %5.3f %+7.2f %8.5f %+5.1f\n"
 			  : "200 %11.4f %11.4f %8.4f %5.3f "
@@ -363,76 +361,89 @@ void	makeit(void)
 		gal->bsize, gal->bflat, gal->bposang,
 		gal->dsize, gal->dflat, gal->dposang,
 		z, galtype[g]->hubtype);
-          }
-        gal_end(gal);
-        }
-/*---- Cluster galaxies */
-      for (c=clustindex ;c<ncluster && clusters[c]->z > zlow; c++)
-        {
-/*------ Compute the number of galaxies to simulate */
-        n = random_poisson(clusters[c]->lf_eqvol*galdens);
-        nsource += n;
-        clusters[c]->real_ngal += n;
-/*------ Generate cluster galaxies */
-        for (i=n; i--;)
-          {
-          cluster_rndgalpos(clusters[c], &x, &y, &z);
-          if (z<=0.0)
-            continue;
-          gal = gal_init(galtype[g], z, mabsmax, refpb, pbcorr, npb);
-          if (gal->refmag < prefs.maglim[0] || gal->refmag > prefs.maglim[1])
-            {
-            gal_end(gal);
-            continue;
             }
-          clusters[c]->real_mabs += exp(-0.921034*gal->mabs);
-/*-------- Add constant shear */
-          if (shearflag)
-            gal_shear(gal, prefs.lens_kappa, prefs.lens_gamma, npb);
-
-/*-------- Position in pixel coordinates*/
-          pos[0] = clusters[c]->x + x / prefs.pixscale;
-          pos[1] = clusters[c]->y + y / prefs.pixscale;
-/*-------- Now in each observed passband */
-          for (p=0; p<npb; p++)
+          gal_end(gal);
+          }
+/*------ Cluster galaxies */
+        for (c=clustindex ;c<ncluster && clusters[c]->z > zlow; c++)
+          {
+/*-------- Compute the number of galaxies to simulate */
+          n = random_poisson(clusters[c]->lf_eqvol*galdens);
+          nsource += n;
+          clusters[c]->real_ngal += n;
+/*-------- Generate cluster galaxies */
+          for (i=n; i--;)
             {
-            fprintf(catfile[p],
+            cluster_rndgalpos(clusters[c], &x, &y, &z);
+            if (z<=0.0)
+              continue;
+            gal = gal_init(galtype[g], z, mabsmax, refpb, pbcorr, npb);
+            if (gal->refmag < prefs.maglim[0] || gal->refmag > prefs.maglim[1])
+              {
+              gal_end(gal);
+              continue;
+              }
+            clusters[c]->real_mabs += exp(-0.921034*gal->mabs);
+/*---------- Add constant shear */
+            if (shearflag)
+              gal_shear(gal, prefs.lens_kappa, prefs.lens_gamma, npb);
+
+/*---------- Position in pixel coordinates*/
+            pos[0] = clusters[c]->x + x / prefs.pixscale;
+            pos[1] = clusters[c]->y + y / prefs.pixscale;
+/*---------- Now in each observed passband */
+            for (p=0; p<npb; p++)
+              {
+              fprintf(catfile[p],
 		"200 %11.4f %11.4f %8.4f %5.3f "
 		"%9.3f %5.3f %+7.2f %9.3f %5.3f %+7.2f %8.5f %+5.1f\n",
 		pos[0], pos[1],
 		gal->mag[p], gal->bt[p],
 		gal->bsize, gal->bflat, gal->bposang,
 		gal->dsize, gal->dflat, gal->dposang, z, galtype[g]->hubtype);
+              }
+            gal_end(gal);
             }
-          gal_end(gal);
           }
         }
+/*---- Compute cluster luminosity stats */
+      for (c=clustindex ;c<ncluster && clusters[c]->z > zlow; c++)
+        if (clusters[c]->real_ngal)
+          clusters[c]->real_mabs = -2.5*log10(clusters[c]->real_mabs);
+      clustindex = c;
+      for (p=0; p<npb; p++)
+        if (pbcorr[p] != pb[p])
+          sed_end(pbcorr[p]);
       }
-/*-- Compute cluster luminosity stats */
-    for (c=clustindex ;c<ncluster && clusters[c]->z > zlow; c++)
-      if (clusters[c]->real_ngal)
-        clusters[c]->real_mabs = -2.5*log10(clusters[c]->real_mabs);
-    clustindex = c;
-    for (p=0; p<npb; p++)
-      if (pbcorr[p] != pb[p])
-        sed_end(pbcorr[p]);
+
+    NFPRINTF(OUTPUT,"");
+    NPRINTF(OUTPUT, "%ld galax%s generated\n", nsource, nsource>1?"ies":"y");
     }
 
-  NFPRINTF(OUTPUT,"");
-  NPRINTF(OUTPUT, "%ld galax%s generated\n", nsource, nsource>1?"ies":"y");
+/* Stars */
+  nstarsed = 0;
+  if ((prefs.star_flag)) {
+/*-- Get the star SEDs */
+    NFPRINTF(OUTPUT, "Loading star SEDs...");
+    nstarsed = prefs.nstar_sedname;
+    for (p=0; p<nstarsed; p++)
+      starsed[p] = sed_load(seddir_name, prefs.star_sedname[p]);
 
-/* Generate field stars */
-  if ((prefs.starflag)) {
+/*-- Calibrate the star SEDs */
+    NFPRINTF(OUTPUT, "Calibrating star SEDs...");
+    for (i=0; i<nstarsed; i++)
+      sed_calib(starsed[i], refpb);
+
+/*-- Generate field stars */
 //-- Initialize the random generator
     NFPRINTF(OUTPUT, "Initializing star random generator...");
     init_random(prefs.starseed);
 
-    dn = domega*10000000.0;
+    dn = prefs.star_countnumber * domega / (DEG*DEG);
     n = (int)random_poisson(dn);
     nsource += n;
     sprintf(gstr, "Adding %d stars...", n);
     NFPRINTF(OUTPUT, gstr);
-
     for (i=n; i--;) {
 //---- Randomize coordinates */
       x = random_double();
@@ -448,7 +459,9 @@ void	makeit(void)
         pos[0] = x * xscale - xoffset;
         pos[1] = y * yscale - yoffset;
       }
-      mag = prefs.maglim[1] + log10(random_double()+1e-8) / 0.4;
+      mag = prefs.maglim[1] + log10(random_double() + EPS_RANDFLUX) / prefs.star_countslope;
+      if (mag < prefs.maglim[0])
+        continue;
 
 //---- Randomize the stellar SED */
       while ((s=(int)(random_double()*nstarsed)) >= nstarsed);

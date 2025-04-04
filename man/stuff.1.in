@@ -14,7 +14,7 @@ Stuff is a program that generates artificial but realistic
 catalogs of astronomical sources. These catalogs can be loaded
 in SkyMaker to generate image simulations.
 .RE
-See http://astromatic.net/software/stuff for more details.
+See https://astromatic.net/software/stuff for more details.
 .SS "Operation modes:"
 .TP
 \fB\-h\fR, \fB\-\-help\fR
@@ -29,16 +29,14 @@ SH MANUAL
 The full documentation for
 .B Stuff
 is maintained as a PDF manual available at
-.B http://astromatic.net/software/stuff
+.B https://astromatic.net/software/stuff
 .SH "REPORTING BUGS"
-Please report bugs to the Stuff software forum at
-http://astromatic.net/forum.
+Report bugs to https://github.com/astromatic/stuff/issues
 .SH "SEE ALSO"
 .BR
-eye(1), missfits(1), psfex(1), scamp(1), sex(1), sky(1), stiff(1), swarp(1),
-ww(1).
+sky(1).
 .SH AUTHORS
-Written by Emmanuel Bertin (Institut d'Astrophysique de Paris)
+Written by Emmanuel Bertin (CEA DAp-AIM/OSUPS/UParisSaclay).
 .PP
 .SH LICENSE
 Stuff is licensed under the terms of the General Public License (GPL),

@@ -7,7 +7,7 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2017 IAP/CNRS/UPMC
+*	Copyright:		(C) 1999-2018 IAP/CNRS/UPMC
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +22,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		29/05/2017
+*	Last modified:		09/04/2018
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -44,6 +44,8 @@ int idummy;
 
 pkeystruct key[] =
  {
+  {"ADD_GALAXIES", P_BOOL, &prefs.gal_flag},
+  {"ADD_STARS", P_BOOL, &prefs.star_flag},
   {"BULGE_FRACTION", P_FLOATLIST, prefs.gal_bt, 0,0, 0.0, 1.0,
    {""}, 1, GAL_MAXNTYPE, &prefs.ngal_bt},
   {"CALIBSED_REF", P_STRING, prefs.refcalibsed_name},
@@ -77,7 +79,6 @@ pkeystruct key[] =
    {"NONE","MADAU_AVERAGE",""}},
   {"FIELD_SIZE", P_FLOATLIST, prefs.field_size, 0,0, 0.0,100000.0,
    {""}, 1, 2, &prefs.nfield_size},
-  {"INCLUDE_STARS", P_BOOL, &prefs.starflag},
   {"LENS_KAPPA", P_FLOAT, &prefs.lens_kappa, 0,0, -1.0, 1.0},
   {"LENS_GAMMA", P_FLOATLIST, prefs.lens_gamma, 0,0, -1.0, 1.0,
    {""}, 2, 2, &prefs.nlens_gamma},
@@ -120,6 +121,8 @@ pkeystruct key[] =
   {"SPHEROID_REVOL", P_FLOAT, &prefs.gal_brevol, 0,0, -10.0,10.0},
   {"SPHEROID_RKNEE", P_FLOAT, &prefs.gal_brknee, 0,0, 0.0, 1e12},
   {"SPHEROID_MKNEE", P_FLOAT, &prefs.gal_bmknee, 0,0, -100.0,100.0},
+  {"STARCOUNT_NUMBER", P_FLOAT, &prefs.star_countnumber, 0,0, 0.0,1e12},
+  {"STARCOUNT_SLOPE", P_FLOAT, &prefs.star_countslope, 0,0, 0.0,4.0},
   {"VERBOSE_TYPE", P_KEY, &prefs.verbose_type, 0,0, 0.0,0.0,
    {"QUIET","NORMAL","LOG", "FULL",""}},
 
@@ -166,7 +169,12 @@ char *default_prefs[] =
 "OMEGA_LAMBDA    0.7             # Cosmol constant in units of critical density",
 "*DISTANCE_STEP   5.0             # Integration step along z (h-1.Mpc)",
 " ",
-"#----------------------- Spectral Energy Distributions -----------------------",
+
+"#------------------------------- Galaxy field --------------------------------",
+" ",
+"ADD_GALAXIES    Y               # add a galaxy field?",
+" ",
+"#------------------- Galaxy Spectral Energy Distributions --------------------",
 " ",
 "SED_GALAXIES    E,Sbc,Scd,Im    # SEDs for galaxy components",
 " ",
@@ -238,8 +246,10 @@ char *default_prefs[] =
 "*",
 "#------------------------------ Stellar field --------------------------------",
 " ",
-"INCLUDE_STARS   N               # allow addition of a stellar field?",
-"*SED_STARS       Vega            # stellar SEDs",
+"ADD_STARS       N               # add a stellar field?",
+"*SED_STARS       a5v,f5v,g5v,k5v,m5v # stellar SEDs",
+"*STARCOUNT_NUMBER 3e4            # nb of stars /deg2 brighter than MAG_LIMITS",
+"*STARCOUNT_SLOPE 0.2             # slope of differential star counts (dexp/mag)",
 " ",
 "#----------------------------- Random Seeds ----------------------------------",
 " ",
