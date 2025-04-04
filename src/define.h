@@ -7,7 +7,9 @@
 *
 *	This file part of:	Stuff
 *
-*	Copyright:		(C) 1999-2010 Emmanuel Bertin -- IAP/CNRS/UPMC
+*	Copyright:		(C) 2005-2021 IAP/CNRS/SorbonneU
+*	          		(C)	2021-2023 CFHT/CNRS
+*	          		(C) 2023-2025 CEA/AIM/UParisSaclay
 *
 *	License:		GNU General Public License
 *
@@ -22,7 +24,7 @@
 *	You should have received a copy of the GNU General Public License
 *	along with Stuff. If not, see <http://www.gnu.org/licenses/>.
 *
-*	Last modified:		26/10/2010
+*	Last modified:		04/04/2025
 *
 *%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%*/
 
@@ -37,13 +39,13 @@
 
 #define         BANNER		"Stuff"
 #define         MYVERSION       VERSION
-#define         COPYRIGHT       "2010 IAP/CNRS/UPMC"
+#define         COPYRIGHT       "2005-2025 IAP/CNRS/SorbonneU/CFHT/CEA/AIM/UParisSaclay"
 #define		DISCLAIMER	BANNER " comes with ABSOLUTELY NO WARRANTY\n" \
 		"You may redistribute copies of " BANNER "\n" \
 		"under the terms of the GNU General Public License."
-#define         AUTHORS		"Emmanuel BERTIN <bertin@iap.fr>"
-#define		WEBSITE		"http://astromatic.net/software/stuff"
-#define         INSTITUTE	"IAP  http://www.iap.fr"
+#define         AUTHORS		"Emmanuel BERTIN <bertin@universite-paris-saclay.fr>"
+#define		WEBSITE		"https://astromatic.net/software/stuff"
+#define		INSTITUTE	"AIM https://irfu.cea.fr/dap/"
 
 /*----------------------------- Physical constants --------------------------*/
 

@@ -4,10 +4,9 @@
 a program that generates artificial catalogs of astronomical sources
 
 
-Check out the on-line [documentation], the [official web page], and the [user forum].
+Check out  the [official web page] and the companion [SkyMaker] package
 
-[Stuff]: http://astromatic.net/software/stuff
-[documentation]: http://stuff.readthedocs.org
-[official web page]: http://astromatic.net/software/stuff
-[user forum]: http://astromatic.net/forum/forumdisplay.php?fid=20
+[Stuff]: https://astromatic.net/software/stuff
+[official web page]: https://astromatic.net/software/stuff
+[SkyMaker]: https://github.com/astromatic/skymaker
 
