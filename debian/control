@@ -5,7 +5,9 @@
 #
 #	This file part of:	Stuff
 #
-#	Copyright:		(C) 2006-2017 IAP/CNRS/UPMC
+#	Copyright:		(C) 2005-2021 IAP/CNRS/SorbonneU
+#	          		(C) 2021-2023 CFHT/CNRS
+#	          		(C) 2023-2025 CEA/AIM/UParisSaclay
 #
 #	License:		GNU General Public License
 #
@@ -18,21 +20,21 @@
 #	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #	GNU General Public License for more details.
 #	You should have received a copy of the GNU General Public License
-#	along with Stuff.  If not, see <http://www.gnu.org/licenses/>.
+#	along with Stuff.  If not, see <https://www.gnu.org/licenses/>.
 #
-#	Last modified:		29/09/2017
+#	Last modified:		04/04/2025
 #
 #%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 Source: stuff
 Section: science
 Priority: optional
-Maintainer: Emmanuel Bertin <bertin@iap.fr>
+Maintainer: Emmanuel Bertin <emmanuel.bertin@universite-paris-saclay.fr>
 Build-Depends: debhelper (>= 9)
-Homepage: http://astromatic.net/software/stuff
+Homepage: https://astromatic.net/software/stuff
 
 Package: stuff
 Architecture: any
 Depends: ${misc:Depends}, ${shlibs:Depends}
-Description: a utility that generates artificial catalogs of astronomical sources
+Description: a program that generates artificial catalogs of astronomical sources.
 
