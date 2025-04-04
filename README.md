@@ -1,4 +1,4 @@
-#Stuff
+# Stuff
 
 
 a program that generates artificial catalogs of astronomical sources
